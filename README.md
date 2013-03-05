@@ -1,4 +1,4 @@
-Simple IRC Chat client for haxe/nme/haxeui (Formerly <a href="https://github.com/ianharrigan/haxeui">haxeui</a>)
+Simple IRC Chat client for haxe/nme/haxeui (<a href="https://github.com/ianharrigan/haxeui">haxeui</a>)
 ================================
 A simple test project to establish how better to put apps together using haxeui.
 
