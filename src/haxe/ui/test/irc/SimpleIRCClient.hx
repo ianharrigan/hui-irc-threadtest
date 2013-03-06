@@ -37,28 +37,11 @@ class SimpleIRCClient extends EventDispatcher {
 		
 	}
 	
-	public function login(nick:String):Void { // TODO: should be async so we can have a "connecting" ui animation or such
+	public function login(nick:String):Void {
 		this.nick = nick;
 		
-		socket.output.writeString("NICK " + nick + "\r\n");
-		socket.output.writeString("USER " + nick + " 8 * : " + nick + "\r\n");
-		socket.output.flush();
-		
-		while (true) {
-			var line:String = socket.input.readLine();
-			trace(line);
-			if (line.indexOf("004") >= 0) {
-                // We are now logged in.
-				dispatchEvent(new IRCEvent(IRCEvent.LOGGED_IN));
-                break;
-            } else if (line.indexOf("432") >= 0) {
-                dispatchEvent(new IRCEvent(IRCEvent.ERROR, "Invalid nickname"));
-                return;
-            } else if (line.indexOf("433") >= 0) {
-                dispatchEvent(new IRCEvent(IRCEvent.ERROR, "Nickname is already in use"));
-                return;
-            }
-		}
+		var loginThread:Thread = Thread.create(loginAsync);
+		loginThread.sendMessage(this);
 	}
 	
 	public function join(channel:String):Void {
@@ -66,6 +49,8 @@ class SimpleIRCClient extends EventDispatcher {
 		
         socket.output.writeString("JOIN " + channel + "\r\n");
         socket.output.flush();
+		
+		dispatchEvent(new IRCEvent(IRCEvent.JOINED_CHANNEL));
 		
 		readThread = Thread.create(readLoop);
 		readThread.sendMessage(this);
@@ -75,6 +60,30 @@ class SimpleIRCClient extends EventDispatcher {
         socket.output.writeString("PRIVMSG " + channel + " :" + msg + "\r\n");
         socket.output.flush();
 		dispatchEvent(new IRCEvent(IRCEvent.DATA_SENT, "me : " + msg));
+	}
+
+	private function loginAsync():Void {
+		var client:SimpleIRCClient = Thread.readMessage(true);
+		
+		client.socket.output.writeString("NICK " + client.nick + "\r\n");
+		client.socket.output.writeString("USER " + client.nick + " 8 * : " + client.nick + "\r\n");
+		client.socket.output.flush();
+		
+		while (true) {
+			var line:String = client.socket.input.readLine();
+			trace(line);
+			if (line.indexOf("004") >= 0) {
+                // We are now logged in.
+				client.dispatchEvent(new IRCEvent(IRCEvent.LOGGED_IN));
+                break;
+            } else if (line.indexOf("432") >= 0) {
+                client.dispatchEvent(new IRCEvent(IRCEvent.ERROR, "Invalid nickname"));
+                break;
+            } else if (line.indexOf("433") >= 0) {
+                client.dispatchEvent(new IRCEvent(IRCEvent.ERROR, "Nickname is already in use"));
+                break;
+            }
+		}
 	}
 	
 	private function readLoop():Void {

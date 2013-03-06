@@ -7,6 +7,7 @@ import native.events.MouseEvent;
 
 class IRCController extends Controller {
 	private var irc:SimpleIRCClient;
+	private var connectingPopup:Popup;
 	
 	public function new() {
 		super(ComponentParser.fromXMLAsset("ui/irc.xml"));
@@ -25,6 +26,7 @@ class IRCController extends Controller {
 		irc.addEventListener(IRCEvent.DATA_RECEIVED, onDataReceived);
 		irc.addEventListener(IRCEvent.DATA_SENT, onDataSent);
 		irc.addEventListener(IRCEvent.ERROR, onError);
+		connectingPopup = Popup.showBusy(view.root, "Connecting, please wait...");
 		irc.connect(getComponent("server").text);
 	}
 	
@@ -40,6 +42,8 @@ class IRCController extends Controller {
 
 	private function onJoinedChannel(event:IRCEvent):Void {
 		trace("Joined channel: " + irc.channel);
+		
+		Popup.hidePopup(connectingPopup);
 	}
 	
 	private function onDataReceived(event:IRCEvent):Void {
