@@ -17,7 +17,7 @@
   <classpaths>
     <class path="src" />
     <class path="C:\Tools\Haxe\haxe\lib\nme/3,5,4/" />
-    <class path="bin/windows/cpp/haxe" />
+    <class path="bin/windows/neko/haxe" />
   </classpaths>
   <!-- Build options -->
   <build>
