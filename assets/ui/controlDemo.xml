@@ -41,8 +41,11 @@
 			<dropdown text="Dropdown 2" id="dropdownlist2" />
 			<dropdown text="Dropdown 3" id="dropdownlist3" />
 		</hbox>
-		
-		<listview width="100%" height="100%" id="theList" />
+
+		<hbox width="100%" height="100%">
+			<listview width="50%" height="100%" id="theList" />
+			<listview width="50%" height="100%" id="theList2" />
+		</hbox>
 		
 		<hbox>
 			<label text="Text:" styles="fixedWidth" />
@@ -67,6 +70,9 @@
 		<hbox>
 			<button text="Simple Popup" id="simplePopup" />
 			<dropdown text="Dropdown list 3" id="dropdown3" />
+		</hbox>
+		<hbox>
+			<button text="Busy Popup" id="busyPopup" />
 		</hbox>
 	</vbox>
 	
