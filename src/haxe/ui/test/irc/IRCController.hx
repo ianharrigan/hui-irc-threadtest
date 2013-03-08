@@ -1,67 +1,55 @@
 package haxe.ui.test.irc;
+
 import haxe.ui.containers.ListView;
+import haxe.ui.containers.TabView;
 import haxe.ui.core.ComponentParser;
 import haxe.ui.core.Controller;
 import haxe.ui.popup.Popup;
 import native.events.MouseEvent;
 
 class IRCController extends Controller {
-	private var irc:SimpleIRCClient;
-	private var connectingPopup:Popup;
-	
 	public function new() {
 		super(ComponentParser.fromXMLAsset("ui/irc.xml"));
 		
-		attachEvent("connectButton", MouseEvent.CLICK, onConnect);
-		attachEvent("sendButton", MouseEvent.CLICK, function(e) {
-			irc.sendMessage(getComponent("dataToSend").text);
+		attachEvent("createConnectionButton", MouseEvent.CLICK, onCreateConnection);
+	}
+
+	private function onCreateConnection(event:MouseEvent):Void {
+		var controller:ConnectionPopupController = new ConnectionPopupController();
+		var createConnectionPopup:Popup = Popup.showCustom(view.root, controller.view, "New Connection", true);
+		controller.attachEvent("cancelButton", MouseEvent.CLICK, function (e) {
+			Popup.hidePopup(createConnectionPopup);
 		});
-	}
-	
-	private function onConnect(event:MouseEvent):Void {
-		irc = new SimpleIRCClient();
-		irc.addEventListener(IRCEvent.CONNECTED, onConnected);
-		irc.addEventListener(IRCEvent.LOGGED_IN, onLoggedIn);
-		irc.addEventListener(IRCEvent.JOINED_CHANNEL, onJoinedChannel);
-		irc.addEventListener(IRCEvent.DATA_RECEIVED, onDataReceived);
-		irc.addEventListener(IRCEvent.DATA_SENT, onDataSent);
-		irc.addEventListener(IRCEvent.ERROR, onError);
-		connectingPopup = Popup.showBusy(view.root, "Connecting, please wait...");
-		irc.connect(getComponent("server").text);
-	}
-	
-	private function onConnected(event:IRCEvent):Void {
-		trace("Connected to: " + irc.server + "...");
-		irc.login(getComponent("nickname").text);
-	}
-	
-	private function onLoggedIn(event:IRCEvent):Void {
-		trace("Logged in as: " + irc.nick);
-		irc.join(getComponent("channel").text);
-	}
-
-	private function onJoinedChannel(event:IRCEvent):Void {
-		trace("Joined channel: " + irc.channel);
 		
-		Popup.hidePopup(connectingPopup);
-	}
-	
-	private function onDataReceived(event:IRCEvent):Void {
-		trace("Got data: " + event.data);
-		var item:Dynamic = { };
-		item.text = event.data;
-		getComponentAs("data", ListView).addItem(item); // TODO: should use data source
-	}
-
-	private function onDataSent(event:IRCEvent):Void {
-		trace("Sent data: " + event.data);
-		var item:Dynamic = { };
-		item.text = event.data;
-		getComponentAs("data", ListView).addItem(item); // TODO: should use data source
-	}
-	
-	private function onError(event:IRCEvent):Void {
-		trace("Error: " + event.data);
-		Popup.showSimple(view.root, event.data, "Error", true);
+		controller.attachEvent("connectButton", MouseEvent.CLICK, function (e) {
+			var server:String = controller.getComponent("server").text;
+			var channel:String = controller.getComponent("channel").text;
+			var nickname:String = controller.getComponent("nickname").text;
+			
+			var irc:SimpleIRCClient = new SimpleIRCClient();
+			var connectingPopup:Popup = null;
+			irc.addEventListener(IRCEvent.CONNECTED, function (e) {
+				trace("connected");
+				irc.login(nickname);
+			});
+			irc.addEventListener(IRCEvent.LOGGED_IN, function (e) {
+				trace("logged in");
+				irc.join(channel);
+			});
+			irc.addEventListener(IRCEvent.JOINED_CHANNEL, function (e) {
+				trace("joined");
+				Popup.hidePopup(connectingPopup);
+				Popup.hidePopup(createConnectionPopup);
+				var tabController:IRCTabController = new IRCTabController(irc);
+				getComponentAs("mainTabs", TabView).addPage(channel, tabController.view);
+			});
+			irc.addEventListener(IRCEvent.ERROR, function (e:IRCEvent) {
+				Popup.hidePopup(connectingPopup);
+				Popup.showSimple(view.root, e.data, "Error", true);
+				trace("error");
+			});
+			connectingPopup = Popup.showBusy(view.root, "Connecting, please wait...");
+			irc.connect(server);
+		});
 	}
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<vbox width="100%">
+	<hbox width="100%">
+		<label width="80" text="Server:"/>
+		<textfield text="irc.freenode.net" id="server" width="100%"/>
+	</hbox>
+	<hbox width="100%">
+		<label width="80" text="Channel:"/>
+		<textfield text="#irchacks" id="channel" width="100%"/>
+	</hbox>
+	<hbox width="100%">
+		<label width="80" text="Nickname:"/>
+		<textfield text="haxe_client" id="nickname" width="100%"/>
+	</hbox>
+	<hbox>
+		<button text="Cancel" id="cancelButton" />
+		<button text="Connect" id="connectButton" />
+	</hbox>
+</vbox>

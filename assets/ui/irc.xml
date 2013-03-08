@@ -1,34 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<vbox width="100%" height="100%" styles="paddedBox">
+<tabview id="mainTabs">
 	<style>
-		paddedBox {
-			paddingLeft: 5;
-			paddingRight: 5;
-			paddingTop: 5;
-			paddingBottom: 5;
+		BusyPopup {
+			width: 200;
 		}
 	</style>
-	<hbox width="100%">
-		<label width="100" text="Server:"/>
-		<textfield text="irc.freenode.net" id="server" width="100%"/>
-	</hbox>
-	<hbox width="100%">
-		<label width="100" text="Channel:"/>
-		<textfield text="#irchacks" id="channel" width="100%"/>
-	</hbox>
-	<hbox width="100%">
-		<label width="100" text="Nickname:"/>
-		<textfield text="haxe_client" id="nickname" width="100%"/>
-	</hbox>
-	<hbox>
-		<button text="Disconnect" id="disconnectButton" />
-		<button text="Connect" id="connectButton" />
-	</hbox>
-	
-	<listview id="data" width="100%" height="100%" />
-	
-	<hbox width="100%">
-		<textfield text="hello!" id="dataToSend" width="100%" />
-		<button text="Send" id="sendButton" />
-	</hbox>
-</vbox>
+
+	<vbox text="Home">
+		<label text="Click 'New Connection' to start a new irc connection" />
+		<button text="New Connection" id="createConnectionButton" />
+	</vbox>
+</tabview>

@@ -1,5 +1,7 @@
 package haxe.ui.test.irc;
 
+import haxe.ui.core.Component;
+import haxe.ui.core.ComponentParser;
 import haxe.ui.core.Root;
 import haxe.ui.style.StyleManager;
 import haxe.ui.style.windows.WindowsStyles;

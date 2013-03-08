@@ -6,12 +6,12 @@
     <movie input="" />
     <movie path="application.nmml" />
     <movie fps="60" />
-    <movie width="800" />
+    <movie width="300" />
     <movie height="480" />
     <movie version="3" />
     <movie minorVersion="0" />
     <movie platform="NME" />
-    <movie background="0" />
+    <movie background="FFFFFF" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
@@ -25,7 +25,7 @@
     <option flashStrict="False" />
     <option mainClass="ApplicationMain" />
     <option enabledebug="True" />
-    <option additional="-resource assets/ui/test01.xml@ui/test01.xml&#xA;-resource assets/ui/controlDemo.xml@ui/controlDemo.xml&#xA;-resource assets/ui/irc.xml@ui/irc.xml&#xA;--remap flash:nme&#xA;--remap browser:native" />
+    <option additional="-resource assets/ui/test01.xml@ui/test01.xml&#xA;-resource assets/ui/controlDemo.xml@ui/controlDemo.xml&#xA;-resource assets/ui/controlDemo_androidStyles.xml@ui/controlDemo_androidStyles.xml&#xA;-resource assets/ui/importTest.xml@ui/importTest.xml&#xA;-resource assets/ui/importTestChild.xml@ui/importTestChild.xml&#xA;-resource assets/ui/customPopup.xml@ui/customPopup.xml&#xA;-resource assets/ui/irc.xml@ui/irc.xml&#xA;-resource assets/ui/createConnectionPopup.xml@ui/createConnectionPopup.xml&#xA;--remap flash:nme&#xA;--remap browser:native" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>
