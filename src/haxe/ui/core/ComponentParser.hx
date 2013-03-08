@@ -20,7 +20,7 @@ class ComponentParser {
 		
 	}
 
-	public static function fromXMLAsset(xmlStringId:String):Component {
+	private static function getXMLAssetString(xmlStringId:String):String {
 		#if embeddedXML
 			//trace("Using xml skin as resource");
 			var xmlString:String = haxe.Resource.getString(xmlStringId);
@@ -28,7 +28,11 @@ class ComponentParser {
 			//trace("Using xml skin as asset");
 			var xmlString:String = Assets.getText(xmlStringId);
 		#end
-		return fromXMLString(xmlString);
+		return xmlString;
+	}
+	
+	public static function fromXMLAsset(xmlStringId:String):Component {
+		return fromXMLString(getXMLAssetString(xmlStringId));
 	}
 	
 	public static function fromXMLString(xmlString:String):Component {
@@ -42,8 +46,20 @@ class ComponentParser {
 	}
 	
 	public static function fromXML(xml:Xml):Component {
+		if (xml.get("if") != null && xml.get("if").length > 0) { // make sure it satisfies the criteria
+			var ifValue = xml.get("if");
+			if (Globals.has(ifValue) == false) {
+				return null;
+			}
+		}
+		
 		if (hasComponentClass(xml.nodeName) == false) {
-			processInlineStyle(xml);
+			if (xml.nodeName == "style") {
+				processInlineStyle(xml);
+			} else if (xml.nodeName == "import") {
+				var importResId:String = xml.get("resource");
+				return fromXMLAsset(importResId);
+			}
 		}
 		
 		var width:Float = 0;

@@ -35,6 +35,8 @@
 		}
 	</style>
 	
+	<import resource="ui/controlDemo_androidStyles.xml" if="androidTheme"/>
+	
 	<vbox text="List" id="list">
 		<hbox>
 			<dropdown text="Dropdown 1" id="dropdownlist1" width="200" />
@@ -43,8 +45,7 @@
 		</hbox>
 
 		<hbox width="100%" height="100%">
-			<listview width="50%" height="100%" id="theList" />
-			<listview width="50%" height="100%" id="theList2" />
+			<listview width="100%" height="100%" id="theList" />
 		</hbox>
 		
 		<hbox>
@@ -73,6 +74,7 @@
 		</hbox>
 		<hbox>
 			<button text="Busy Popup" id="busyPopup" />
+			<button text="Custom Popup" id="customPopup" />
 		</hbox>
 	</vbox>
 	

@@ -8,7 +8,7 @@
 	<!-- output -->
 	<app main="haxe.ui.test.irc.Main" file="haxeirc" path="bin" />
 	
-	<window background="#000000" fps="60" />
+	<window background="#FFFFFF" fps="60" />
 	<window width="300" height="480" unless="mobile" />
 	<window orientation="landscape" vsync="true" antialiasing="0" if="cpp" />
 	
@@ -48,5 +48,9 @@
 	<haxedef name="embeddedXML" />
 	<haxeflag name="-resource" value="assets/ui/test01.xml@ui/test01.xml" />
 	<haxeflag name="-resource" value="assets/ui/controlDemo.xml@ui/controlDemo.xml" />
+	<haxeflag name="-resource" value="assets/ui/controlDemo_androidStyles.xml@ui/controlDemo_androidStyles.xml" />
+	<haxeflag name="-resource" value="assets/ui/importTest.xml@ui/importTest.xml" />
+	<haxeflag name="-resource" value="assets/ui/importTestChild.xml@ui/importTestChild.xml" />
+	<haxeflag name="-resource" value="assets/ui/customPopup.xml@ui/customPopup.xml" />
 	<haxeflag name="-resource" value="assets/ui/irc.xml@ui/irc.xml" />
 </project>
