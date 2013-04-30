@@ -30,7 +30,6 @@ class VScroll extends Component {
 	
 	public function new() {
 		super();
-		addStyleName("VScroll");
 		autoSize = false;
 	}
 
@@ -43,10 +42,7 @@ class VScroll extends Component {
 		if (currentStyle.hasButtons != null && currentStyle.hasButtons == true) {
 			buttonUp = new Button();
 			buttonUp.width = buttonUp.height = innerWidth;
-			buttonUp.addStyleName("VScroll.upButton");
-			if (id != null) {
-				buttonUp.id = id + ".upButton";
-			}
+			buttonUp.id = "buttonUp";
 			buttonUp.autoSize = false;
 			buttonUp.verticalAlign = "top";
 			buttonUp.addEventListener(MouseEvent.MOUSE_DOWN, onUp);
@@ -54,10 +50,7 @@ class VScroll extends Component {
 			
 			buttonDown = new Button();
 			buttonDown.width = buttonDown.height = innerWidth;
-			buttonDown.addStyleName("VScroll.downButton");
-			if (id != null) {
-				buttonDown.id = id + ".downButton";
-			}
+			buttonDown.id = "buttonDown";
 			buttonDown.autoSize = false;
 			buttonDown.verticalAlign = "bottom";
 			buttonDown.addEventListener(MouseEvent.MOUSE_DOWN, onDown);
@@ -66,10 +59,7 @@ class VScroll extends Component {
 
 		thumb = new Button();
 		thumb.width = thumb.height = innerWidth;
-		thumb.addStyleName("VScroll.thumb");
-		if (id != null) {
-			thumb.id = id + ".thumb";
-		}
+		thumb.id = "thumb";
 		thumb.autoSize = false;
 		thumb.toggle = true;
 		thumb.allowSelection = false;
@@ -110,11 +100,11 @@ class VScroll extends Component {
 		var ypos:Float = event.stageY - mouseDownOffset;
 		var minY:Float = 0;
 		if (buttonUp != null) {
-			minY = buttonUp.height + spacingY;
+			minY = buttonUp.height + layout.spacingY;
 		}
 		var maxY:Float = getUsableHeight() - thumb.height;
 		if (buttonUp != null) {
-			maxY += buttonUp.height + spacingY;
+			maxY += buttonUp.height + layout.spacingY;
 		}
 		if (ypos < minY) {
 			ypos = minY;
@@ -260,19 +250,19 @@ class VScroll extends Component {
 			var m:Int = Std.int(max - min);
 			var thumbPos:Float = ((value - min) / m) * ucy;
 			if (buttonUp != null) {
-				thumbPos += buttonUp.height + spacingY;
+				thumbPos += buttonUp.height + layout.spacingY;
 			}
 			thumb.y = Std.int(thumbPos);
 		}
 	}
 	
-	public override function getUsableHeight():Float {
+	private override function getUsableHeight(c:Component = null):Float {
 		var ucy:Float = innerHeight;
 		if (buttonUp != null) {
-			ucy -= buttonUp.height + spacingY;
+			ucy -= buttonUp.height + layout.spacingY;
 		}
 		if (buttonDown != null) {
-			ucy -= buttonDown.height + spacingY;
+			ucy -= buttonDown.height + layout.spacingY;
 		}
 		return ucy;
 	}

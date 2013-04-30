@@ -16,7 +16,6 @@ class Label extends Component {
 	
 	public function new() {
 		super();
-		addStyleName("Label");
 		
 		textControl = new TextField();
 	}
@@ -46,7 +45,7 @@ class Label extends Component {
 		if (currentStyle.fontSize != null) {
 			textControl.setTextFormat(new TextFormat(currentStyle.fontName, currentStyle.fontSize, currentStyle.color));
 		}
-		
+
 		sizeTextControl();
 	}
 	
@@ -69,6 +68,9 @@ class Label extends Component {
 		rawText = value;
 		if (ready == true) {
 			textControl.text = value;
+			if (autoSize == true) {
+				sizeTextControl();
+			}
 		}
 		return value;
 	}
@@ -77,6 +79,10 @@ class Label extends Component {
 	//                  HELPERS
 	//************************************************************
 	private function sizeTextControl():Void {
+		if (ready == false) {
+			return;
+		}
+		
 		if (wordWrap == false) {
 			if (text.length == 0) {
 				textControl.width = 0;
@@ -87,20 +93,17 @@ class Label extends Component {
 			}
 		} else {
 			if (width != 0) {
-				textControl.width = width - (padding.left + padding.right);
+				textControl.width = width - (layout.padding.left + layout.padding.right);
 			}
 			if (height != 0) {
-				textControl.height = height - (padding.top + padding.bottom);
+				textControl.height = height - (layout.padding.top + layout.padding.bottom);
 			}
 		}
 		
-		if (width == 0) {
-			width = textControl.width + (padding.left + padding.right);
-		}
-		if (height == 0) {
-			height = textControl.height + (padding.top + padding.bottom);
-		}
-		textControl.x = padding.left;
-		textControl.y = padding.top;
+		width = textControl.width + (layout.padding.left + layout.padding.right);
+		height = textControl.height + (layout.padding.top + layout.padding.bottom);
+		
+		textControl.x = layout.padding.left;
+		textControl.y = layout.padding.top;
 	}
 }

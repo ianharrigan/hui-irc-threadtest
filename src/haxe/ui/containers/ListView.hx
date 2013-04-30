@@ -1,6 +1,10 @@
 package haxe.ui.containers;
 
-import nme.Assets;
+import haxe.ui.controls.DropDownList;
+import haxe.ui.controls.HSlider;
+import haxe.ui.data.ArrayDataSource;
+import haxe.ui.data.DataSource;
+import haxe.ui.resources.ResourceManager;
 import nme.display.Bitmap;
 import nme.display.DisplayObject;
 import nme.events.Event;
@@ -13,31 +17,39 @@ import haxe.ui.controls.ProgressBar;
 import haxe.ui.controls.RatingControl;
 import haxe.ui.core.Component;
 import haxe.ui.style.StyleManager;
+import haxe.ui.layout.Layout;
 
 class ListView extends ScrollView {
 	private var items:Array<ListViewItem>;
+	
 	public var selectedIndex(default, setSelectedIndex):Int = -1;
 
 	public var listSize(getListSize, null):Int;
 	public var itemHeight(getItemHeight, null):Float;
 
+	public var dataSource:DataSource;
+	
 	public function new() {
 		super();
-		addStyleName("ListView");
 		
 		items = new Array<ListViewItem>();
 		
-		viewContent = new VBox();
+		viewContent = new ListViewContent();
 		viewContent.percentWidth = 100;
-		viewContent.addStyleName("ListView.content");
+		
+		if (dataSource == null) {
+			dataSource = new ArrayDataSource();
+		}
 	}
 
 	public override function initialize():Void {
 		super.initialize();
 		
-		if (id != null) {
-			viewContent.id = id + ".content";
-		}
+		dataSource.addEventListener(Event.CHANGE, onDataSourceChange);
+		dataSource.open();
+		
+		viewContent.id = "listViewContent";
+		synchronizeUI();
 	}
 	
 	//************************************************************
@@ -81,7 +93,83 @@ class ListView extends ScrollView {
 		}
 	}
 	
-	public function removeItem(index:Int):Void {
+	private function onDataSourceChange(event:Event):Void {
+		synchronizeUI();
+	}
+	
+	private function synchronizeUI():Void {
+		var pos:Int = 0;
+		if (dataSource != null) {
+			if (dataSource.moveFirst()) {
+				do {
+					var dataHash:String = dataSource.hash();
+					var data:Dynamic = dataSource.get();
+					var item:ListViewItem = items[pos];
+					if (item == null) { // add item
+						addItemUI(dataHash, data, pos);
+						pos++;
+					} else {
+						if (item.dataHash == dataHash) { // item is in the right position
+							pos++;
+						} else { // if not remove items 
+							while (item != null && item.dataHash != dataHash) { // keep on removing until we find a match
+								removeItemUI(pos);
+								item = items[pos];
+							}
+							pos++;
+						}
+					}
+				} while (dataSource.moveNext());
+			}
+		}
+		
+		for (n in pos...items.length) { // remove anything left over
+			removeItemUI(n);
+		}
+	}
+	
+	private function addItemUI(dataHash:String, data:Dynamic, index:Int = -1):Void {
+		if (data == null) {
+			return;
+		}
+		
+		var itemData:Dynamic = data;
+		if (Std.is(data, String)) {
+			var itemString:String = cast(data, String);
+			itemData = { };
+			itemData.text = itemString;
+		}
+		itemData.text = (itemData.text != null) ? itemData.text : "";
+		itemData.subtext = (itemData.subtext != null) ? itemData.subtext : null;
+		itemData.enabled = (itemData.enabled != null) ? itemData.enabled : true;
+		itemData.type = (itemData.type != null) ? itemData.type : null;
+		itemData.value = (itemData.value != null) ? itemData.value : null;
+		itemData.id = (itemData.id != null) ? itemData.id : null;
+		itemData.controlId = (itemData.controlId != null) ? itemData.controlId : null;
+		
+		var c:ListViewItem = new ListViewItem(this);
+		c.id = itemData.id;
+		c.dataHash = dataHash;
+		c.percentWidth = 100;
+		c.itemData = itemData;
+		c.enabled = itemData.enabled;
+		if (index == -1) {
+			viewContent.addChild(c);
+			items.push(c);
+		} else {
+			viewContent.addChildAt(c, index);
+			items.insert(index, c);
+		}
+		if (ready) {
+			invalidate(false); // TODO: this should probably happen automatically
+		}
+		
+		c.addEventListener(MouseEvent.MOUSE_OVER, buildMouseOverFunction(items.length-1));
+		c.addEventListener(MouseEvent.MOUSE_OUT, buildMouseOutFunction(items.length-1));
+		c.addEventListener(MouseEvent.CLICK, buildMouseClickFunction(items.length-1));
+	}
+	
+	private function removeItemUI(index:Int):Void {
 		var listItem:ListViewItem = items[index];
 		if (listItem != null) {
 			if (index == selectedIndex) {
@@ -89,6 +177,7 @@ class ListView extends ScrollView {
 			}
 			items.remove(listItem);
 			viewContent.removeChild(listItem);
+			listItem.dispose();
 			if (ready) {
 				invalidate(false); // TODO: this should probably happen automatically
 			}
@@ -105,40 +194,21 @@ class ListView extends ScrollView {
 		}
 	}
 	
-	public function addItem(item:Dynamic, additionalStyleNames:String = null):Component {
-		var itemData:Dynamic = { };
-		if (Std.is(item, String)) {
-			var itemString:String = cast(item, String);
-			item = { };
-			item.text = itemString;
+	public function removeItem(index:Int):Void { // TODO: shouldnt exist, should just remove from data source
+		if (dataSource  != null) {
+			if (dataSource.moveFirst()) {
+				var pos:Int = 0;
+				do {
+					if (pos == index) {
+						dataSource.remove();
+						break;
+					}
+					pos++;
+				} while (dataSource.moveNext());
+			}
 		}
-		itemData.text = (item.text != null) ? item.text : "";
-		itemData.subtext = (item.subtext != null) ? item.subtext : null;
-		itemData.enabled = (item.enabled != null) ? item.enabled : true;
-		itemData.type = (item.type != null) ? item.type : null;
-		itemData.value = (item.value != null) ? item.value : null;
-		itemData.fn = (item.fn != null) ? item.fn : null;
-		
-		var c:ListViewItem = new ListViewItem(this);
-		if (additionalStyleNames != null) {
-			c.addStyleName(additionalStyleNames);
-		}
-		c.percentWidth = 100;
-		c.itemData = itemData;
-		c.enabled = itemData.enabled;
-		viewContent.addChild(c);
-		items.push(c);
-		if (ready) {
-			invalidate(false); // TODO: this should probably happen automatically
-		}
-		
-		c.addEventListener(MouseEvent.MOUSE_OVER, buildMouseOverFunction(items.length-1));
-		c.addEventListener(MouseEvent.MOUSE_OUT, buildMouseOutFunction(items.length-1));
-		c.addEventListener(MouseEvent.CLICK, buildMouseClickFunction(items.length-1));
-		
-		return c;
 	}
-
+	
 	public function getListItem(index:Int):ListViewItem {
 		return items[index];
 	}
@@ -166,8 +236,16 @@ class ListView extends ScrollView {
 		if (items.length == 0) {
 			return 0;
 		}
-		
-		return items[0].height;
+		var n:Int = 0;
+		var cy:Float = 0;
+		for (item in items) {
+			cy += item.height;
+			n++;
+			if (n > 100) {
+				break;
+			}
+		}
+		return Std.int(cy / n);
 	}
 	
 	public function setSelectedIndex(value:Int):Int {
@@ -181,17 +259,56 @@ class ListView extends ScrollView {
 		}
 		return value;
 	}
+	
+	//************************************************************
+	//                  OVERRIDES
+	//************************************************************
+	public override function dispose():Void {
+		super.dispose();
+		dataSource.close();
+	}
 }
 
 //************************************************************
 //                  CHILD CLASSES
 //************************************************************
+class ListViewContent extends VBox { // makes content easier to style
+	public function new() {
+		super();
+	}
+}
+
+class ListViewEvent extends Event {
+	public static var COMPONENT_EVENT:String = "ComponentEvent";
+	
+	private var li:ListViewItem;
+	private var c:Component;
+	
+	public var item(getItem, null):ListViewItem;
+	public var typeComponent(getTypeComponent, null):Component;
+	
+	public function new(type:String, listItem:ListViewItem, component:Component) {
+		super(type);
+		li = listItem;
+		c = component;
+	}
+	
+	public function getItem():ListViewItem {
+		return li;
+	}
+	
+	public function getTypeComponent():Component {
+		return c;
+	}
+}
+
 class ListViewItem extends Component {
 	public var itemData:Dynamic;
+	public var dataHash:String;
 	
-	private var textComponent:Label;
-	private var subTextComponent:Label;
-	private var iconComponent:DisplayObject;
+	public var textComponent:Label;
+	public var subTextComponent:Label;
+	public var iconComponent:DisplayObject;
 	
 	private var parentList:ListView;
 	
@@ -204,15 +321,13 @@ class ListViewItem extends Component {
 	public function new(parentList:ListView) {
 		this.parentList = parentList;
 		super();
-		inheritStylesFrom = "ListView";
+		layout = new ListViewItemLayout();
+		
+		//sprite.useHandCursor = true;
+		//sprite.buttonMode = true;
 		
 		registerState("over");
 		registerState("selected");
-		for (s in parentList.styleString.split(" ")) {
-			if (s != " " && s != "") {
-				addStyleName(s + ".item");
-			}
-		}
 	}
 
 	public override function initialize():Void {
@@ -222,16 +337,9 @@ class ListViewItem extends Component {
 			textComponent = new Label();
 			textComponent.registerState("over");
 			textComponent.registerState("selected");
-			for (s in parentList.styleString.split(" ")) {
-				if (s != " ") {
-					textComponent.addStyleName(s + ".item.text");
-				}
-			}
-			if (parentList.id != null) {
-				textComponent.id = id + ".item.text";
-			}
+			textComponent.id = "listViewText";
 			textComponent.text = itemData.text;
-			textComponent.percentWidth = 100;
+			//textComponent.percentWidth = 100;
 			addChild(textComponent);
 		}
 
@@ -239,22 +347,15 @@ class ListViewItem extends Component {
 			subTextComponent = new Label();
 			subTextComponent.registerState("over");
 			subTextComponent.registerState("selected");
-			for (s in parentList.styleString.split(" ")) {
-				if (s != " ") {
-					subTextComponent.addStyleName(s + ".item.subtext");
-				}
-			}
-			if (parentList.id != null) {
-				textComponent.id = id + ".subtext";
-			}
+			subTextComponent.id = "listViewSubtext";
 			subTextComponent.text = itemData.subtext;
-			subTextComponent.percentWidth = 100;
+			//subTextComponent.percentWidth = 100;
 			addChild(subTextComponent);
 		}
 		
 		var icon:String = currentStyle.icon;
 		if (icon != null) {
-			iconComponent = new Bitmap(Assets.getBitmapData(icon));
+			iconComponent = new Bitmap(ResourceManager.getBitmapData(icon));
 			if (iconComponent != null) {
 				currentIconAsset = icon;
 				addChild(iconComponent);
@@ -265,7 +366,10 @@ class ListViewItem extends Component {
 			if (itemData.type == "button") {
 				var button:Button = new Button();
 				button.text = itemData.value;
-				button.addEventListener(MouseEvent.CLICK, itemData.fn);
+				button.addEventListener(MouseEvent.CLICK, function(e) {
+					var event:ListViewEvent = new ListViewEvent(ListViewEvent.COMPONENT_EVENT, this, button);
+					parentList.dispatchEvent(event);
+				});
 				typeComponent = button;
 			} else if (itemData.type == "progress") {
 				var progress:ProgressBar = new ProgressBar();
@@ -274,12 +378,43 @@ class ListViewItem extends Component {
 			} else if (itemData.type == "rating") {
 				var rating:RatingControl = new RatingControl();
 				rating.rating = itemData.value;
+				rating.addEventListener(Event.CHANGE, function(e) {
+					var event:ListViewEvent = new ListViewEvent(ListViewEvent.COMPONENT_EVENT, this, rating);
+					parentList.dispatchEvent(event);
+				});
 				typeComponent = rating;
+			} else if (itemData.type == "hslider") {
+				var hslider:HSlider = new HSlider();
+				hslider.value = itemData.value;
+				hslider.addEventListener(Event.CHANGE, function(e) {
+					var event:ListViewEvent = new ListViewEvent(ListViewEvent.COMPONENT_EVENT, this, hslider);
+					parentList.dispatchEvent(event);
+				});
+				typeComponent = hslider;
+			} else if (itemData.type == "dropdown") {
+				var dropdown:DropDownList = new DropDownList();
+				dropdown.text = "Select Option"; // TODO: shouldnt be here
+				var ds:DataSource = null;
+				if (itemData.dataSource != null) {
+					if (Std.is(itemData.dataSource, Array)) {
+						ds = new ArrayDataSource(itemData.dataSource);
+					}
+				}
+				dropdown.dataSource = ds;
+				dropdown.addEventListener(Event.CHANGE, function(e) {
+					var event:ListViewEvent = new ListViewEvent(ListViewEvent.COMPONENT_EVENT, this, dropdown);
+					parentList.dispatchEvent(event);
+				});
+				
+				typeComponent = dropdown;
 			}
 			
 			if (typeComponent != null) {
 				typeComponent.verticalAlign = "center";
 				typeComponent.horizontalAlign = "farRight";
+				if (itemData.controlId != null) {
+					typeComponent.id = itemData.controlId;
+				}
 				addChild(typeComponent);
 			}
 		}
@@ -298,7 +433,7 @@ class ListViewItem extends Component {
 
 		var newHeight = height;
 		if (totalHeight > innerHeight) {
-			newHeight = totalHeight + padding.top + padding.bottom;
+			newHeight = totalHeight + layout.padding.top + layout.padding.bottom;
 		}
 		
 		this.height = newHeight;
@@ -318,7 +453,7 @@ class ListViewItem extends Component {
 			if (iconComponent != null) {
 				removeChild(iconComponent);
 			}
-			iconComponent = new Bitmap(Assets.getBitmapData(currentStyle.icon));
+			iconComponent = new Bitmap(ResourceManager.getBitmapData(currentStyle.icon));
 			if (iconComponent != null) {
 				currentIconAsset = currentStyle.icon;
 				addChild(iconComponent);
@@ -343,61 +478,70 @@ class ListViewItem extends Component {
 	}
 	
 	public function setSubText(value:String):String {
-		subTextComponent.text = value;
+		if (subTextComponent != null) {
+			subTextComponent.text = value;
+		}
 		return value;
 	}
+}
+
+class ListViewItemLayout extends Layout { // TODO: needs a complete clean up
+	public function new() {
+		super();
+	}
 	
-	private override function repositionChildren():Void {
+	public override function repositionChildren():Void {
 		var iconPosition:String = "left";
-		if (currentStyle.iconPosition != null) {
-			iconPosition = currentStyle.iconPosition;
+		var listItem:ListViewItem = cast(c, ListViewItem);
+		if (c.currentStyle.iconPosition != null) {
+			iconPosition = c.currentStyle.iconPosition;
 		}
 
 		var contentHeight:Float = 0;
-		if (textComponent != null) {
-			contentHeight += textComponent.height;
+		if (listItem.textComponent != null) {
+			contentHeight += listItem.textComponent.height;
 		}
-		if (subTextComponent != null) {
-			contentHeight += subTextComponent.height;
+		if (listItem.subTextComponent != null) {
+			contentHeight += listItem.subTextComponent.height;
 		}
 		
 		
-		var ypos = Std.int((innerHeight / 2) - (contentHeight / 2));
-		if (textComponent != null) {
-			textComponent.y = ypos;
-			if (iconComponent != null && iconPosition == "left") {
-				textComponent.x = iconComponent.width;
+		var ypos = Std.int((c.innerHeight / 2) - (contentHeight / 2));
+		if (listItem.textComponent != null) {
+			listItem.textComponent.y = ypos;
+			if (listItem.iconComponent != null && iconPosition == "left") {
+				listItem.textComponent.x = listItem.iconComponent.width;
 			}
 		}
-		if (subTextComponent != null) {
-			subTextComponent.x = textComponent.x;
-			subTextComponent.y = ypos + textComponent.height;
+		if (listItem.subTextComponent != null) {
+			listItem.subTextComponent.x = listItem.textComponent.x;
+			listItem.subTextComponent.y = ypos + listItem.textComponent.height;
 		}
 		
-		if (iconComponent != null) {
+		if (listItem.iconComponent != null) {
 			if (iconPosition == "farRight") {
-				iconComponent.x = width - iconComponent.width - padding.right;
+				listItem.iconComponent.x = c.width - listItem.iconComponent.width - padding.right;
 			} else {
-				iconComponent.x = padding.right;
+				listItem.iconComponent.x = padding.right;
 			}
 			
-			if (subTextComponent == null) {
-				iconComponent.y = Std.int((height / 2) - (iconComponent.height / 2));
+			if (listItem.subTextComponent == null) {
+				listItem.iconComponent.y = Std.int((c.height / 2) - (listItem.iconComponent.height / 2));
 			} else {
-				iconComponent.y = padding.top;
+				listItem.iconComponent.y = padding.top;
 			}
 			
 		}
 		
-		if (typeComponent != null) {
-			if (typeComponent.horizontalAlign == "farRight") {
-				typeComponent.x = innerWidth - typeComponent.width;
+		if (listItem.typeComponent != null) {
+			if (listItem.typeComponent.horizontalAlign == "farRight") {
+				listItem.typeComponent.x = c.innerWidth - listItem.typeComponent.width;
 			}
 			
-			if (typeComponent.verticalAlign == "top") {
-				typeComponent.y = textComponent.y;
-			}else if (typeComponent.verticalAlign == "center") {
-				typeComponent.y = Std.int((innerHeight / 2) - (typeComponent.height / 2));
+			if (listItem.typeComponent.verticalAlign == "top") {
+				listItem.typeComponent.y = listItem.textComponent.y;
+			}else if (listItem.typeComponent.verticalAlign == "center") {
+				listItem.typeComponent.y = Std.int((c.innerHeight / 2) - (listItem.typeComponent.height / 2));
 			}
 		}
 	}

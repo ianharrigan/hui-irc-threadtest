@@ -22,7 +22,6 @@ class TextInput extends Component {
 	public function new() {
 		super();
 		registerState("over");
-		addStyleName("TextInput");
 		textControl = new TextField();
 	}
 	
@@ -46,20 +45,7 @@ class TextInput extends Component {
 		textControl.addEventListener(Event.CHANGE, onTextControlChange);
 		textControl.addEventListener(Event.SCROLL, onTextControlScroll);
 
-		
-		//upStyle = StyleManager.mergeStyles(upStyle, StyleManager.getCascadedStyleFromId(styleName));
-		//overStyle = StyleManager.mergeStyles(overStyle, StyleManager.getCascadedStyleFromId(styleName + ".over"));
-		
 		showStateStyle("normal");
-		
-		/*
-		if (style.width != null && width == 0) {
-			width = style.width;
-		}
-		if (style.height != null && height == 0) {
-			height = style.height;
-		}
-		*/
 	}
 
 	public override function resize():Void {
@@ -111,13 +97,13 @@ class TextInput extends Component {
 	//                  HELPERS
 	//************************************************************
 	private function sizeTextControl():Void {
-		textControl.x = padding.left;
-		textControl.y = padding.top;
+		textControl.x = layout.padding.left;
+		textControl.y = layout.padding.top;
 		if (width != 0) {
-			textControl.width = width - (padding.left + padding.right);
+			textControl.width = width - (layout.padding.left + layout.padding.right);
 		}
 		if (height != 0) {
-			textControl.height = height - (padding.top + padding.bottom);
+			textControl.height = height - (layout.padding.top + layout.padding.bottom);
 		}
 		
 		if (multiline == true && textControl.textHeight > innerHeight) {
@@ -141,18 +127,4 @@ class TextInput extends Component {
 		}
 		
 	}
-	
-	/*
-	private function showState(state:String):Void {
-		if (state == "up") {
-			style = upStyle;
-			var format:TextFormat = new TextFormat(style.fontName, style.fontSize, style.color);
-			textControl.setTextFormat(format);
-		} else if (state == "over") {
-			style = overStyle;
-			var format:TextFormat = new TextFormat(style.fontName, style.fontSize, style.color);
-			textControl.setTextFormat(format);
-		}
-	}
-	*/
 }

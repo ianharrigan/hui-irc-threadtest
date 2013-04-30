@@ -5,51 +5,48 @@ import haxe.ui.containers.TabView;
 import haxe.ui.core.ComponentParser;
 import haxe.ui.core.Controller;
 import haxe.ui.popup.Popup;
-import native.events.MouseEvent;
+import nme.events.MouseEvent;
+
 
 class IRCController extends Controller {
+	private var connection:IRCConnection;
+	
+	public static var mainTabs:TabView;
+	
 	public function new() {
-		super(ComponentParser.fromXMLAsset("ui/irc.xml"));
+		super(ComponentParser.fromXMLResource("ui/irc.xml"));
+		mainTabs = getComponentAs("mainTabs", TabView);
 		
 		attachEvent("createConnectionButton", MouseEvent.CLICK, onCreateConnection);
 	}
 
 	private function onCreateConnection(event:MouseEvent):Void {
-		var controller:ConnectionPopupController = new ConnectionPopupController();
+		var controller:Controller = new Controller(ComponentParser.fromXMLResource("ui/createConnectionPopup.xml"));
 		var createConnectionPopup:Popup = Popup.showCustom(view.root, controller.view, "New Connection", true);
 		controller.attachEvent("cancelButton", MouseEvent.CLICK, function (e) {
 			Popup.hidePopup(createConnectionPopup);
 		});
-		
+
 		controller.attachEvent("connectButton", MouseEvent.CLICK, function (e) {
 			var server:String = controller.getComponent("server").text;
-			var channel:String = controller.getComponent("channel").text;
 			var nickname:String = controller.getComponent("nickname").text;
-			
-			var irc:SimpleIRCClient = new SimpleIRCClient();
-			var connectingPopup:Popup = null;
-			irc.addEventListener(IRCEvent.CONNECTED, function (e) {
-				trace("connected");
-				irc.login(nickname);
-			});
-			irc.addEventListener(IRCEvent.LOGGED_IN, function (e) {
-				trace("logged in");
-				irc.join(channel);
-			});
-			irc.addEventListener(IRCEvent.JOINED_CHANNEL, function (e) {
-				trace("joined");
-				Popup.hidePopup(connectingPopup);
-				Popup.hidePopup(createConnectionPopup);
-				var tabController:IRCTabController = new IRCTabController(irc);
-				getComponentAs("mainTabs", TabView).addPage(channel, tabController.view);
-			});
-			irc.addEventListener(IRCEvent.ERROR, function (e:IRCEvent) {
-				Popup.hidePopup(connectingPopup);
-				Popup.showSimple(view.root, e.data, "Error", true);
-				trace("error");
-			});
-			connectingPopup = Popup.showBusy(view.root, "Connecting, please wait...");
-			irc.connect(server);
+			if (connection == null) {
+				var connectingPopup:Popup = null;
+				
+				connection = new IRCConnection(server);
+				connection.addEventListener(IRCEvent.CONNECTED, function(e) {
+					Popup.hidePopup(connectingPopup);
+					Popup.hidePopup(createConnectionPopup);
+					
+					var tabController:IRCTabController = new IRCTabController(connection, nickname);
+					tabController.view.text = server + ":6667";
+					getComponentAs("mainTabs", TabView).addChild(tabController.view);
+					getComponentAs("mainTabs", TabView).selectedIndex = getComponentAs("mainTabs", TabView).pageCount - 1;
+				});
+				
+				connectingPopup = Popup.showBusy(view.root, "Connecting...");
+				connection.start();
+			}
 		});
 	}
 }

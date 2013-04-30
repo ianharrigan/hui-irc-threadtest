@@ -1,5 +1,7 @@
 package haxe.ui.popup;
 
+import haxe.ui.data.ArrayDataSource;
+import haxe.ui.data.DataSource;
 import nme.filters.DropShadowFilter;
 import haxe.ui.controls.Label;
 import haxe.ui.core.Component;
@@ -7,18 +9,17 @@ import haxe.ui.core.Root;
 
 class Popup extends Component {
 	private var content:Component;
-	public var title:String = "HaxeUI";
+	public var title:String = "NME UI Toolkit";
 	private var titleComponent:Label;
 	
 	public function new() {
 		super();
-		addStyleName("Popup");
 		
 		content = new Component();
-		content.addStyleName("Popup.content");
+		content.id = "popupContent";
 
 		titleComponent = new Label();
-		titleComponent.addStyleName("Popup.title");
+		titleComponent.id = "popupTitle";
 	}
 	
 	//************************************************************
@@ -29,14 +30,11 @@ class Popup extends Component {
 		
 		content.percentWidth = 100;
 		content.percentHeight = 100;
-		if (this.id != null) {
-			content.id = id + ".content";
-		}
 		addChild(content);
 		
 		titleComponent.text = title;
 		addChild(titleComponent);
-		height = content.padding.top + content.padding.bottom + 10;
+		height = content.layout.padding.top + content.layout.padding.bottom + 10;
 	}
 	
 	//************************************************************
@@ -56,14 +54,31 @@ class Popup extends Component {
 		return p;
 	}
 	
-	public static function showList(root:Root, items:Array<Dynamic>, title:String = null, selectedIndex:Int = -1, fnCallback:Dynamic->Void = null, modal:Bool = true):Popup {
+	public static function showList(root:Root, items:Dynamic, title:String = null, selectedIndex:Int = -1, fnCallback:Dynamic->Void = null, modal:Bool = true):Popup {
 		var p:ListPopup = new ListPopup();
 		p.root = root;
 		if (title != null) {
 			p.title = title;
 		}
 		p.selectedIndex = selectedIndex;
-		p.items = items;
+		
+		var ds:DataSource = null;
+		if (Std.is(items, Array)) { // we need to convert items into a proper data source for the list
+			var arr:Array<Dynamic> = cast(items, Array<Dynamic>);
+			ds = new ArrayDataSource([]);
+			for (item in arr) { // TODO: have to use objects in data sources else cant get proper object ids, means you cant just add an array of strings
+				if (Std.is(item, String)) {
+					var o:Dynamic = { };
+					o.text = cast(item, String);
+					ds.add(o);
+				} else { // assume its an object
+					ds.add(item);
+				}
+			}
+		} else if (Std.is(items, DataSource)) {
+			ds = cast(items, DataSource);
+		}
+		p.dataSource = ds;
 		p.fnCallback = fnCallback;
 		
 		centerPopup(p);

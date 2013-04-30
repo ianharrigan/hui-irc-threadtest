@@ -9,8 +9,6 @@ class SimplePopup extends Popup {
 	
 	public function new() {
 		super();
-		inheritStylesFrom = "Popup";
-		addStyleName("SimplePopup");
 	}
 	
 	//************************************************************
@@ -33,7 +31,7 @@ class SimplePopup extends Popup {
 		});
 		content.addChild(button);
 		
-		height = content.padding.top + content.padding.bottom + textControl.height + button.height + 10;
+		height = content.layout.padding.top + content.layout.padding.bottom + textControl.height + button.height + 10;
 		Popup.centerPopup(this);
 	}
 }

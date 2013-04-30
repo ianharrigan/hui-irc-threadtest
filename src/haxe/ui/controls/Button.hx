@@ -1,6 +1,6 @@
 package haxe.ui.controls;
 
-import nme.Assets;
+import haxe.ui.resources.ResourceManager;
 import nme.display.Bitmap;
 import nme.display.BitmapData;
 import nme.display.Sprite;
@@ -27,7 +27,7 @@ class Button extends Component {
 		super();
 		registerState("over");
 		registerState("down");
-		addStyleName("Button");
+		label = new Label();
 	}
 	
 	//************************************************************
@@ -35,6 +35,9 @@ class Button extends Component {
 	//************************************************************
 	public override function applyStyle():Void {
 		super.applyStyle();
+		if (ready == false) {
+			return;
+		}
 		
 		label.currentStyle = currentStyle;
 		label.applyStyle();
@@ -46,17 +49,17 @@ class Button extends Component {
 		
 		repositionLabel();
 		if (currentStyle.icon != null) {
-			var bitmapData:BitmapData = Assets.getBitmapData(currentStyle.icon);
+			var bitmapData:BitmapData = ResourceManager.getBitmapData(currentStyle.icon);
 			if (bitmapData != null) {
 				var lcx:Float = 0;
 				var lcy:Float = 0;
 				if (iconPosition == "left" || iconPosition == "right" || iconPosition == "farRight") {
-					var requiredWidth:Float = label.width + (bitmapData.width * 2) + (spacingX * 2) + (padding.left + padding.right);
+					var requiredWidth:Float = label.width + (bitmapData.width * 2) + (layout.spacingX * 2) + (layout.padding.left + layout.padding.right);
 					if (innerWidth < requiredWidth && autoSize == true) {
 						width = Std.int(requiredWidth);
 					}
 				} else if (iconPosition == "top") {
-					var requiredHeight:Float = label.height + bitmapData.height + spacingY + (padding.top + padding.bottom);
+					var requiredHeight:Float = label.height + bitmapData.height + layout.spacingY + (layout.padding.top + layout.padding.bottom);
 					if (innerHeight < requiredHeight && autoSize == true) {
 						height = Std.int(requiredHeight);
 					}
@@ -66,31 +69,31 @@ class Button extends Component {
 				var iconX:Float = 0;
 				var iconY:Float = 0;
 				if (label.text.length == 0) {
-					iconX = (this.innerWidth / 2) - ((bitmapData.width) / 2) + padding.left;
-					iconY = (this.innerHeight / 2) - ((bitmapData.height) / 2) + padding.top;
+					iconX = (this.innerWidth / 2) - ((bitmapData.width) / 2) + layout.padding.left;
+					iconY = (this.innerHeight / 2) - ((bitmapData.height) / 2) + layout.padding.top;
 				} else {
 					if (iconPosition == "left") {
-						iconX = label.x - bitmapData.width + padding.left - spacingX;
-						iconY = (this.innerHeight / 2) - ((bitmapData.height) / 2) + padding.top;
+						iconX = label.x - bitmapData.width + layout.padding.left - layout.spacingX;
+						iconY = (this.innerHeight / 2) - ((bitmapData.height) / 2) + layout.padding.top;
 					} else if (iconPosition == "right") {
-						iconX = label.x + label.width + padding.left + spacingX;
-						iconY = (this.innerHeight / 2) - ((bitmapData.height) / 2) + padding.top;
+						iconX = label.x + label.width + layout.padding.left + layout.spacingX;
+						iconY = (this.innerHeight / 2) - ((bitmapData.height) / 2) + layout.padding.top;
 					} else if (iconPosition == "farRight") {
-						iconX = this.width - padding.right - bitmapData.width;
-						iconY = (this.innerHeight / 2) - ((bitmapData.height) / 2) + padding.top;
+						iconX = this.width - layout.padding.right - bitmapData.width;
+						iconY = (this.innerHeight / 2) - ((bitmapData.height) / 2) + layout.padding.top;
 					} else if (iconPosition == "top") {
-						var combinedHeight:Float = label.height + bitmapData.height + spacingY;
+						var combinedHeight:Float = label.height + bitmapData.height + layout.spacingY;
 						
-						iconX = (this.innerWidth / 2) - ((bitmapData.width) / 2) + padding.left;
-						iconY = (this.innerHeight / 2) - ((combinedHeight) / 2) + padding.top;
+						iconX = (this.innerWidth / 2) - ((bitmapData.width) / 2) + layout.padding.left;
+						iconY = (this.innerHeight / 2) - ((combinedHeight) / 2) + layout.padding.top;
 						
-						label.y = iconY + bitmapData.height - padding.top;
+						label.y = Std.int(iconY + bitmapData.height - layout.padding.top);
 					}
 				}
 
 				var srcRect:Rectangle = new Rectangle(0, 0, bitmapData.width, bitmapData.height);
 				var dstRect:Rectangle = new Rectangle(Std.int(iconX), Std.int(iconY), bitmapData.width, bitmapData.height);
-				StyleHelper.paintBitmapSection(sprite.graphics, currentStyle.icon, srcRect, dstRect);
+				StyleHelper.paintBitmapSection(sprite.graphics, currentStyle.icon, null, srcRect, dstRect);
 			}
 		}
 	}
@@ -104,7 +107,6 @@ class Button extends Component {
 		//addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 		addEventListener(MouseEvent.CLICK, onClick);
 		
-		label = new Label();
 		if (this.id != null) {
 			label.id = this.id;
 		}
@@ -215,8 +217,8 @@ class Button extends Component {
 				labelX = 0;
 			}
 			
-			label.x = labelX;
-			label.y = labelY;
+			label.x = Std.int(labelX);
+			label.y = Std.int(labelY);
 		}
 	}
 }

@@ -1,5 +1,6 @@
 package haxe.ui.controls;
 
+import haxe.ui.layout.HorizonalLayout;
 import nme.events.MouseEvent;
 import haxe.ui.core.Component;
 import haxe.ui.style.StyleManager;
@@ -15,15 +16,15 @@ class CheckBox extends Component {
 		super();
 		registerState("over");
 		registerState("down");
-		addStyleName("CheckBox");
 		
 		valueControl = new ValueControl();
-		valueControl.inheritStylesFrom = "CheckBox.value";
 		valueControl.verticalAlign = "center";
 		valueControl.value = "unselected";
 	
 		textControl = new Label();
 		textControl.verticalAlign = "center";
+		
+		layout = new HorizonalLayout();
 	}
 	
 	//************************************************************
@@ -34,32 +35,23 @@ class CheckBox extends Component {
 
 		valueControl.addValue("unselected");
 		valueControl.addValue("selected");
-		valueControl.addStyleName("CheckBox.value");
-		if (id != null) {
-			valueControl.id = id + ".value";
-		}
 		
 		sprite.useHandCursor = true;
 		sprite.buttonMode = true;
 		
 		textControl.text = text;
+		textControl.currentStyle = currentStyle;
 		
 		addChild(valueControl);
 		addChild(textControl);
 		
-		width = valueControl.width + textControl.width + padding.left + padding.right;
+		width = valueControl.width + textControl.width + layout.padding.left + layout.padding.right;
 		var cy:Float = Math.max(valueControl.height, textControl.height);
-		height = cy + padding.top + padding.bottom;
+		height = cy + layout.padding.top + layout.padding.bottom;
 		
 		addEventListener(MouseEvent.MOUSE_OVER, onMouseOver);
 		addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
 		addEventListener(MouseEvent.CLICK, onMouseClick);
-	}
-	
-	public override function resize():Void {
-		super.resize();
-		
-		textControl.x = valueControl.width;// spacingX;
 	}
 
 	//************************************************************
@@ -69,14 +61,12 @@ class CheckBox extends Component {
 		valueControl.state = "over";
 		showStateStyle(valueControl.state);
 		textControl.currentStyle = currentStyle;
-		textControl.applyStyle();
 	}
 	
 	private function onMouseOut(event:MouseEvent):Void {
 		valueControl.state = "normal";
 		showStateStyle(valueControl.state);
 		textControl.currentStyle = currentStyle;
-		textControl.applyStyle();
 	}
 	
 	private function onMouseClick(event:MouseEvent):Void {

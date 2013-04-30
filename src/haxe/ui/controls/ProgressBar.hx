@@ -12,13 +12,9 @@ class ProgressBar extends Component {
 	
 	public function new() {
 		super();
-		addStyleName("ProgressBar");
 		
 		valueComponent = new Component();
-		valueComponent.addStyleName("ProgressBar.value");
-		if (id != null) {
-			valueComponent.id = id + ".value";
-		}
+		valueComponent.id = "progressBarValue";
 	}
 	
 	//************************************************************
@@ -55,6 +51,10 @@ class ProgressBar extends Component {
 	//                  HELPERS
 	//************************************************************
 	private function resizeValue():Void {
+		if (ready == false) {
+			return;
+		}
+		
 		var m:Float = (max - min);
 		var cx:Float = (innerWidth * value) / 100;
 		if (cx < 0) {

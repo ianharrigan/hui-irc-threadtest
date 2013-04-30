@@ -3,13 +3,13 @@
 	<!-- NMML reference: https://gist.github.com/1763850 -->
 	
 	<!-- metadata, make sure 'package' is at least 3 segments (ie. com.mycompany.myproject) -->
-	<meta title="Haxe IRC" package="haxe.ui.test.irc" version="1.0.0" company="Ian Harrigan" />
+	<meta title="IRC Client" package="haxe.ui.test.irc" version="1.0.0" company="Ian Harrigan" />
 	
 	<!-- output -->
-	<app main="haxe.ui.test.irc.Main" file="haxeirc" path="bin" />
+	<app main="haxe.ui.test.irc.Main" file="irc" path="bin" />
 	
 	<window background="#FFFFFF" fps="60" />
-	<window width="300" height="480" unless="mobile" />
+	<window width="380" height="480" unless="mobile" />
 	<window orientation="landscape" vsync="true" antialiasing="0" if="cpp" />
 	
 	<!-- classpath, haxe libs -->
@@ -22,13 +22,15 @@
 	<icon path="assets/icons/application_24.png" width="24" height="24"/>
 	<icon path="assets/icons/application_32.png" width="32" height="32"/>
 	<icon path="assets/icons/application_48.png" width="48" height="48"/>
-	
+
 	<assets path="assets/img" rename="img" />
-	<assets path="assets/skins" rename="skins" exclude="*.xml" if="html5" />
+	
+	<assets path="assets/skins" rename="skins" exclude="*.xml|*.css" if="html5" />
 	<assets path="assets/skins" rename="skins" unless="html5" />
+	
 	<assets path="assets/icons" rename="icons" />
 
-	<assets path="assets/ui" rename="ui" exclude="*.xml" if="html5" />
+	<assets path="assets/ui" rename="ui" exclude="*.xml|*.css" if="html5" />
 	<assets path="assets/ui" rename="ui" unless="html5" />
 
 	<!-- for skin sounds -->
@@ -44,9 +46,47 @@
 	<haxeflag name="--dead-code-elimination" if="html5" />
 	<haxeflag name="--js-modern" if="html5" />
 	
-	<!-- Embed xml skin data (to avoid html5 xss loading issue -->
-	<haxedef name="embeddedXML" />
 	<haxeflag name="-resource" value="assets/ui/irc.xml@ui/irc.xml" />
 	<haxeflag name="-resource" value="assets/ui/ircTab.xml@ui/ircTab.xml" />
+	<haxeflag name="-resource" value="assets/ui/ircChannelTab.xml@ui/ircChannelTab.xml" />
 	<haxeflag name="-resource" value="assets/ui/createConnectionPopup.xml@ui/createConnectionPopup.xml" />
+	<haxeflag name="-resource" value="assets/ui/joinChannelPopup.xml@ui/joinChannelPopup.xml" />
+	
+	<haxeflag name="-resource" value="assets/skins/gradient/gradient.css@skins/gradient/gradient.css" />
+	
+	<!-- embed windows theme assets -->
+	<haxeflag name="-resource" value="assets/skins/windows/windows.css@skins/windows/windows.css" />
+	<haxeflag name="-resource" value="assets/skins/windows/buttons.css@skins/windows/buttons.css" />
+	<haxeflag name="-resource" value="assets/skins/windows/tabs.css@skins/windows/tabs.css" />
+	<haxeflag name="-resource" value="assets/skins/windows/listview.css@skins/windows/listview.css" />
+	<haxeflag name="-resource" value="assets/skins/windows/scrolls.css@skins/windows/scrolls.css" />
+	<haxeflag name="-resource" value="assets/skins/windows/popups.css@skins/windows/popups.css" />
+	<haxeflag name="-resource" value="assets/skins/windows/sliders.css@skins/windows/sliders.css" />
+	
+	<haxeflag name="-resource" value="assets/skins/windows/glyphs/down_arrow.png@skins/windows/glyphs/down_arrow.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/glyphs/hscroll_thumb_gripper_down.png@skins/windows/glyphs/hscroll_thumb_gripper_down.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/glyphs/hscroll_thumb_gripper_over.png@skins/windows/glyphs/hscroll_thumb_gripper_over.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/glyphs/hscroll_thumb_gripper_up.png@skins/windows/glyphs/hscroll_thumb_gripper_up.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/glyphs/left_arrow.png@skins/windows/glyphs/left_arrow.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/glyphs/right_arrow.png@skins/windows/glyphs/right_arrow.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/glyphs/up_arrow.png@skins/windows/glyphs/up_arrow.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/glyphs/vscroll_thumb_gripper_down.png@skins/windows/glyphs/vscroll_thumb_gripper_down.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/glyphs/vscroll_thumb_gripper_over.png@skins/windows/glyphs/vscroll_thumb_gripper_over.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/glyphs/vscroll_thumb_gripper_up.png@skins/windows/glyphs/vscroll_thumb_gripper_up.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/icons/star.png@skins/windows/icons/star.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/icons/star-empty.png@skins/windows/icons/star-empty.png" />
+
+	<haxeflag name="-resource" value="assets/skins/windows/button.png@skins/windows/button.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/checkbox.png@skins/windows/checkbox.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/container.png@skins/windows/container.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/hscroll.png@skins/windows/hscroll.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/listview.png@skins/windows/listview.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/optionbox.png@skins/windows/optionbox.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/popup.png@skins/windows/popup.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/progress.png@skins/windows/progress.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/tab.png@skins/windows/tab.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/textinput.png@skins/windows/textinput.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/vscroll.png@skins/windows/vscroll.png" />
+	<haxeflag name="-resource" value="assets/skins/windows/vslider.png@skins/windows/vslider.png" />
+	
 </project>

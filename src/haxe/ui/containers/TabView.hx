@@ -14,6 +14,9 @@ class TabView extends Component {
 	
 	private var currentPage:Component;
 	
+	public var selectedIndex(getSelectedIndex, setSelectedIndex):Int;
+	public var pageCount(getPageCount, null):Int;
+	
 	public function new() {
 		super();
 	
@@ -22,7 +25,7 @@ class TabView extends Component {
 		tabs = new TabBar();
 		tabs.percentWidth = 100;
 		
-		content = new Component();
+		content = new TabViewContent();
 		content.percentWidth = 100;
 	}
 	
@@ -31,8 +34,7 @@ class TabView extends Component {
 	//************************************************************
 	public override function initialize():Void {
 		tabs.addEventListener(Event.CHANGE, onTabChange);
-		
-		content.addStyleName("TabView.content");
+		content.id = "tabViewContent";
 		
 		if (width <= 0 && percentWidth <= 0) { // TODO: shouldnt need to set this
 			percentWidth = 100;
@@ -48,8 +50,8 @@ class TabView extends Component {
 	public override function resize():Void {
 		super.resize();
 		
-		content.height = innerHeight - tabs.height - spacingY;
-		content.y = tabs.height + padding.top + spacingY;
+		content.height = innerHeight - tabs.height - layout.spacingY;
+		content.y = tabs.height + layout.padding.top + layout.spacingY;
 	}
 	
 	public override function dispose():Void {
@@ -70,12 +72,10 @@ class TabView extends Component {
 		}
 		
 		var additionalStyles:String = "";
-		if (id != null && comp.id != null) {
-			additionalStyles += "#" + id + "." + comp.id;
-		}
 		var button:Button = tabs.addTab(comp.text, additionalStyles);
+		button.styles = "tab";
 		if (comp.id != null) {
-			button.id = comp.id + ".tab";
+			button.id = comp.id;
 		}
 		
 		comp.percentWidth = 100;
@@ -99,30 +99,6 @@ class TabView extends Component {
 	public override function listChildComponents():Array<Component> {
 		return content.listChildComponents();
 	}
-	//************************************************************
-	//                  TABVIEW FUNCTIONS
-	//************************************************************
-	
-	// DEPRICATED
-	public function addPage(title:String, page:Component = null, additionalStyleNames:String = null):Component {
-		if (page == null) {
-			page = new Component();
-		}
-
-		var button:Button = tabs.addTab(title, additionalStyleNames);
-		
-		page.percentWidth = 100;
-		page.percentHeight = 100;
-		pages.push(page);
-		page.visible = button.selected;
-		if (button.selected == true) {
-			currentPage = page;
-		}
-		
-		content.addChild(page);
-		
-		return page;
-	}
 	
 	//************************************************************
 	//                  EVENT HANDLERS
@@ -130,7 +106,36 @@ class TabView extends Component {
 	private function onTabChange(event:Event):Void {
 		currentPage.visible = false;
 		var page:Component = pages[tabs.selectedIndex];
-		page.visible = true;
-		currentPage = page;
+		if (page != null) {
+			page.visible = true;
+			currentPage = page;
+		}
+	}
+	
+	private function getSelectedIndex():Int {
+		return tabs.selectedIndex;
+	}
+	
+	public function setSelectedIndex(value:Int):Int {
+		tabs.selectedIndex = value;
+		var page:Component = pages[tabs.selectedIndex];
+		if (page != null) {
+			page.visible = true;
+			currentPage = page;
+		}
+		return value;
+	}
+	
+	private function getPageCount():Int {
+		return pages.length;
+	}
+}
+
+//************************************************************
+//                  CHILD CLASSES
+//************************************************************
+class TabViewContent extends Component { // makes content easier to style
+	public function new() {
+		super();
 	}
 }

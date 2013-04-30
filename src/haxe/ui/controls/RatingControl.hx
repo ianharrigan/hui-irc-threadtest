@@ -1,5 +1,6 @@
 package haxe.ui.controls;
 
+import nme.events.Event;
 import nme.events.MouseEvent;
 import haxe.ui.containers.HBox;
 import haxe.ui.core.Component;
@@ -13,7 +14,6 @@ class RatingControl extends HBox {
 	
 	public function new() {
 		super();
-		addStyleName("RatingControl");
 		
 		valueControls = new Array<ValueControl>();
 	}
@@ -27,11 +27,9 @@ class RatingControl extends HBox {
 		for (n in 0...max) {
 			var vc:ValueControl = new ValueControl();
 			
-			vc.inheritStylesFrom = "RatingControl.value";
 			vc.verticalAlign = "center";
 			vc.addValue("unselected");
 			vc.addValue("selected");
-			vc.addStyleName("RatingControl.value");
 			vc.value = "unselected";
 			vc.interactive = false;
 			vc.sprite.useHandCursor = true;
@@ -92,6 +90,9 @@ class RatingControl extends HBox {
 			} else {
 				vc.value = "unselected";
 			}
+		}
+		if (ready) {
+			dispatchEvent(new Event(Event.CHANGE));
 		}
 		return value;
 	}

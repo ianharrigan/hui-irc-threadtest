@@ -1,5 +1,6 @@
 package haxe.ui.popup;
 
+import haxe.ui.data.DataSource;
 import nme.events.Event;
 import nme.events.TimerEvent;
 import nme.Lib;
@@ -7,7 +8,7 @@ import nme.utils.Timer;
 import haxe.ui.containers.ListView;
 
 class ListPopup extends Popup {
-	public var items:Array<Dynamic>;
+	public var dataSource:DataSource;
 	
 	private var list:ListView;
 	public var maxSize:Int = 5;
@@ -19,8 +20,6 @@ class ListPopup extends Popup {
 	
 	public function new() {
 		super();
-		inheritStylesFrom = "Popup";
-		addStyleName("ListPopup");
 	}
 	
 	//************************************************************
@@ -30,27 +29,19 @@ class ListPopup extends Popup {
 		super.initialize();
 		
 		list = new ListView();
-		list.addStyleName("Popup.list");
-		if (this.id != null) {
-			list.id =  id + ".list";
-		}
+		list.dataSource = dataSource;
+		list.id = "popupListView";
 		list.percentWidth = 100;
 		list.percentHeight = 100;
 		content.addChild(list);
-		
-		if (items != null) {
-			for (item in items) {
-				list.addItem(item);
-			}
-		}
 		
 		list.selectedIndex = selectedIndex;
 		var n:Int = maxSize;
 		if (n > list.listSize) {
 			n = list.listSize;
 		}
-		var listHeight:Float = (n * list.itemHeight) + list.padding.top + list.padding.bottom;
-		height = content.padding.top + content.padding.bottom + listHeight;
+		var listHeight:Float = (n * list.itemHeight) + list.layout.padding.top + list.layout.padding.bottom;
+		height = content.layout.padding.top + content.layout.padding.bottom + listHeight;
 		
 		list.addEventListener(Event.CHANGE, onListChange);
 		

@@ -1,5 +1,8 @@
 package haxe.ui.core;
 
+import haxe.ui.containers.ListView;
+import haxe.ui.containers.ScrollView;
+import haxe.ui.layout.Layout;
 import nme.Assets;
 import nme.display.BitmapData;
 import nme.display.DisplayObject;
@@ -31,19 +34,14 @@ class Component implements IEventDispatcher {
 	public var enabled(default, setEnabled):Bool = true;
 	public var text(getText, setText):String = "";
 	
-	public var inheritStylesFrom:String;
-	private var styleStateStrings:Dynamic;
-	private var styleString:String = "";
+	private var stateNames:Array<String>;
 	public var registeredStateNames(getRegisteredStateNames, null):Array<String>;
-	private var stateStyles:Dynamic;
+	private var stateStyles:Hash<Dynamic>;
 	public var currentStyle(getCurrentStyle, setCurrentStyle):Dynamic;
 	
 	public var stageX(getStageX, null):Float;
 	public var stageY(getStageY, null):Float;
 
-	public var padding:Rectangle;
-	public var spacingX:Int = 0;
-	public var spacingY:Int = 0;
 	public var horizontalAlign:String;
 	public var verticalAlign:String;
 	
@@ -63,19 +61,17 @@ class Component implements IEventDispatcher {
 	private var eventListeners:Hash < List < Dynamic->Void >> ;
 	private var eventListenersCopy:Hash < List < Dynamic->Void >> ; // when we disable a component we will hold onto a subset of event listeners so if we reenable it everything works
 	
+	public var styles:String;
+	public var layout:Layout;
 	
 	public function new() {
-		var className:String = Type.getClassName(Type.getClass(this));
-		var x:Int = className.lastIndexOf(".") + 1;
-		className = className.substr(x, className.length);
-		inheritStylesFrom = className;
-		addStyleName("Component");
+		registerState("normal");
 		childComponents = new Array<Component>();
 		eventListeners = new Hash < List < Dynamic->Void >>();
 		sprite = new Sprite();
 		
-		padding = new Rectangle();
 		addEventListener(Event.ADDED_TO_STAGE, onReady);
+		layout = new Layout();
 	}
 	
 	public function invalidate(recursive:Bool = true):Void {
@@ -90,7 +86,7 @@ class Component implements IEventDispatcher {
 		var skipInvalidate:Bool = false;
 		if (parent != null) {
 			if (percentWidth > 0) {
-				var ucx:Float = parent.getUsableWidth();
+				var ucx:Float = parent.getUsableWidth(this);
 				var newWidth:Float = Std.int(ucx * percentWidth / 100);
 				if (newWidth != width && newWidth > -1) {
 					skipInvalidate = true;
@@ -99,7 +95,7 @@ class Component implements IEventDispatcher {
 			}
 			
 			if (percentHeight > 0) {
-				var ucy:Float = parent.getUsableHeight();
+				var ucy:Float = parent.getUsableHeight(this);
 				var newHeight:Float = Std.int(ucy * percentHeight / 100);
 				if (newHeight != height && newHeight > -1) {
 					skipInvalidate = true;
@@ -122,45 +118,26 @@ class Component implements IEventDispatcher {
 			}
 
 			resize();
-			repositionChildren();
+			layout.repositionChildren();
 			
 			invalidationCount++;
 		}
 	}
 	
-	public function getUsableWidth():Float {
-		var ucx:Float = width - (padding.left + padding.right);
+	private function getUsableWidth(c:Component = null):Float {
+		var ucx:Float = width - (layout.padding.left + layout.padding.right);
 		return ucx;
 	}
 	
-	public function getUsableHeight():Float {
-		var ucy:Float = height - (padding.top + padding.bottom);
+	private function getUsableHeight(c:Component = null):Float {
+		var ucy:Float = height - (layout.padding.top + layout.padding.bottom);
 		return ucy;
 	}
+	
 	//************************************************************
 	//                  OVERRIDABLES
 	//************************************************************
 	public function initialize():Void {
-		if (currentStyle != null) {
-			if (currentStyle.paddingLeft != null) {
-				padding.left = currentStyle.paddingLeft;
-			}
-			if (currentStyle.paddingTop != null) {
-				padding.top = currentStyle.paddingTop;
-			}
-			if (currentStyle.paddingRight != null) {
-				padding.right = currentStyle.paddingRight;
-			}
-			if (currentStyle.paddingBottom != null) {
-				padding.bottom = currentStyle.paddingBottom;
-			}
-			if (currentStyle.spacingX != null) {
-				spacingX = currentStyle.spacingX;
-			}
-			if (currentStyle.spacingY != null) {
-				spacingY = currentStyle.spacingY;
-			}
-		}
 	}
 	
 	public function resize():Void {
@@ -170,57 +147,13 @@ class Component implements IEventDispatcher {
 	private function calcSize():Point {
 		var size:Point = new Point(width, height);
 		if (autoSize == true) {
-			size.x = calcWidth();
-			size.y = calcHeight();
+			size.x = layout.calcWidth();
+			size.y = layout.calcHeight();
 		}
 
 		width = size.x;
 		height = size.y;
 		return size;
-	}
-	
-	private function calcWidth():Float {
-		var maxWidth:Float = width;
-		for (child in childComponents) {
-			if (child.width + (padding.left + padding.right) > maxWidth) {
-				maxWidth = child.width + (padding.left + padding.right);
-			}
-		}
-		return maxWidth;
-	}
-	
-	private function calcHeight():Float {
-		var maxHeight:Float = height;
-		for (child in childComponents) {
-			if (child.height + (padding.top + padding.bottom) > maxHeight) {
-				maxHeight = child.height + (padding.top + padding.bottom);
-			}
-		}
-		return maxHeight;
-	}
-	
-	private function repositionChildren():Void {
-		for (child in childComponents) {
-			var childX:Float = child.x;
-			if (child.horizontalAlign == "left") {
-				childX = 0;
-			} else if (child.horizontalAlign == "right") {
-				childX = width - (padding.left + padding.right + child.width);
-			} else if (child.horizontalAlign == "center") {
-				childX = ((width - padding.left - padding.right) / 2) - (child.width / 2);
-			}
-			child.x = Std.int(childX);
-			
-			var childY:Float = child.y;
-			if (child.verticalAlign == "top") {
-				childY = 0;
-			} else if (child.verticalAlign == "bottom") {
-				childY = height - (padding.top + padding.bottom + child.height);
-			} else if (child.verticalAlign == "center") {
-				childY = ((height - padding.top - padding.bottom) / 2) - (child.height / 2);
-			}
-			child.y = Std.int(childY);
-		}
 	}
 	
 	public function dispose():Void {
@@ -243,43 +176,32 @@ class Component implements IEventDispatcher {
 	//                  STYLE FUNCTIONS
 	//************************************************************
 	public function getRegisteredStateNames():Array<String> {
-		var names:Array<String> = new Array<String>();
-		for (stateName in Reflect.fields(styleStateStrings)) {
-			names.push(stateName);
-		}
-		return names;
+		return stateNames;
 	}
 	
 	public function registerState(stateName:String):Void {
-		if (styleStateStrings == null) {
-			styleStateStrings = { };
+		if (stateNames == null) {
+			stateNames = new Array<String>();
 		}
-		Reflect.setField(styleStateStrings, stateName, "");
+		stateNames.push(stateName);
 	}
 	
-	public function applyStyle():Void {
+	private function applyStyle():Void {
 		if (currentStyle != null && ready == true) {
 			var rc:Rectangle = new Rectangle(0, 0, width, height);
 			StyleHelper.paintStyle(this.sprite.graphics, currentStyle, rc);
+			if (currentStyle.alpha != null) {
+				sprite.alpha = currentStyle.alpha;
+			}
 		}
 	}
 	
-	public function addStyleName(styleId:String):Void {
-		styleString += " " + styleId;
-		for (stateName in Reflect.fields(styleStateStrings)) {
-			var stateString:Dynamic = Reflect.field(styleStateStrings, stateName);
-			stateString += " " + styleId + ":" + stateName;
-			Reflect.setField(styleStateStrings, stateName, stateString);
-		}
+	private function hasStateSyle(stateName:String):Bool {
+		return stateStyles.exists(stateName);
 	}
 	
-	public function hasStateSyle(stateName:String):Bool {
-		var stateStyle:Dynamic = Reflect.field(stateStyles, stateName);
-		return stateStyle != null;
-	}
-	
-	public function showStateStyle(stateName:String):Void {
-		var stateStyle:Dynamic = Reflect.field(stateStyles, stateName);
+	private function showStateStyle(stateName:String):Void {
+		var stateStyle:Dynamic = stateStyles.get(stateName);
 		if (stateStyle != null) {
 			currentStyle = stateStyle;
 			applyStyle();
@@ -292,42 +214,43 @@ class Component implements IEventDispatcher {
 	
 	public function setCurrentStyle(value:Dynamic):Dynamic {
 		currentStyle = value;
-		//applyStyle();
+		applyStyle();
 		return value;
 	}
 	
-	private function buildStyles():Void {
-		currentStyle = StyleManager.styleFromString(styleString, inheritStylesFrom);
-		stateStyles = { };
-		Reflect.setField(stateStyles, "normal", currentStyle);
-		if (styleStateStrings != null) {
-			for (stateName in Reflect.fields(styleStateStrings)) {
-				var stateStyle:Dynamic = StyleManager.styleFromString(Reflect.field(styleStateStrings, stateName), inheritStylesFrom);
-				var mergedStyle:Dynamic = StyleManager.mergeStyle(currentStyle, stateStyle);
-				Reflect.setField(stateStyles, stateName, mergedStyle);
-			}
-		}
-		//applyStyle();
-	}
-
 	//************************************************************
 	//                  EVENT HANDLERS
 	//************************************************************
 	private function onReady(event:Event) {
 		removeEventListener(Event.ADDED_TO_STAGE, onReady);
-		if (id != null) {
-			addStyleName("#" + id);
+		
+		currentStyle = StyleManager.buildStyle(this);
+		if (stateStyles == null) {
+			stateStyles = new Hash<Dynamic>();
 		}
-		buildStyles();
+		for (state in getRegisteredStateNames()) {
+			var stateStyle:Dynamic = StyleManager.buildStyle(this, state);
+			stateStyles.set(state, stateStyle);
+		}
+		
 		if (currentStyle.width != null && width == 0) {
 			width = currentStyle.width;
 		}
 		if (currentStyle.height != null && height == 0) {
 			height = currentStyle.height;
 		}
-		calcSize();
+
+		if (currentStyle.percentWidth != null && percentWidth == -1) {
+			percentWidth = currentStyle.percentWidth;
+		}
+		if (currentStyle.percentHeight != null && percentHeight == -1) {
+			percentHeight = currentStyle.percentHeight;
+		}
+		
+		layout.component = this;
 		ready = true;
 		initialize();
+		calcSize();
 		invalidate();
 		
 		// we want a bulk add here, we want to add all the sprites AFTER all the components have been added in childComponents
@@ -338,6 +261,9 @@ class Component implements IEventDispatcher {
 					childComponents.push(c);
 					c.root = this.root;
 					c.parent = this;
+					if (this.enabled == false) {
+						cast(c, Component).enabled = this.enabled;
+					}
 					c = untyped c.sprite;
 				}
 			}
@@ -351,7 +277,7 @@ class Component implements IEventDispatcher {
 			childrenToAdd = null;
 		}
 		calcSize();
-		repositionChildren();
+		layout.repositionChildren();
 	}
 	
 	//************************************************************
@@ -367,8 +293,8 @@ class Component implements IEventDispatcher {
 
 	public function setX(value:Float):Float {
 		rawX = value;
-		if (parent != null) {
-			value += parent.padding.left;
+		if (parent != null && parent.layout != null) {
+			value += parent.layout.padding.left;
 		}
 		sprite.x = value;
 		return rawX;
@@ -380,8 +306,8 @@ class Component implements IEventDispatcher {
 
 	public function setY(value:Float):Float {
 		rawY = value;
-		if (parent != null) {
-			value += parent.padding.top;
+		if (parent != null && parent.layout != null) {
+			value += parent.layout.padding.top;
 		}
 		sprite.y = value;
 		return rawY;
@@ -428,7 +354,7 @@ class Component implements IEventDispatcher {
 		var xpos:Float = x;// + (root.component.x + root.component.padding.left);
 		var p:Component = this.parent;
 		while (p != null) {
-			xpos += p.x + p.padding.left;
+			xpos += p.x + p.layout.padding.left;
 			p = p.parent;
 		}
 		return xpos;
@@ -438,18 +364,18 @@ class Component implements IEventDispatcher {
 		var ypos:Float = y;// + (root.component.y + root.component.padding.top);
 		var p:Component = this.parent;
 		while (p != null) {
-			ypos += p.y + p.padding.top;
+			ypos += p.y + p.layout.padding.top;
 			p = p.parent;
 		}
 		return ypos;
 	}
 	
 	public function getInnerWidth():Float {
-		return width - (padding.left + padding.right);
+		return width - (layout.padding.left + layout.padding.right);
 	}
 	
 	public function getInnerHeight():Float {
-		return height - (padding.top + padding.bottom);
+		return height - (layout.padding.top + layout.padding.bottom);
 	}
 	
 	public function setEnabled(value:Bool):Bool {
@@ -459,7 +385,9 @@ class Component implements IEventDispatcher {
 		
 		enabled = value;
 		if (value == false) {
-			sprite.alpha = .5;
+			if (parent == null || parent.enabled == true) {
+				sprite.alpha = .5;
+			}
 
 			copyEventListeners(MouseEvent.MOUSE_OVER);
 			copyEventListeners(MouseEvent.MOUSE_DOWN);
@@ -474,6 +402,10 @@ class Component implements IEventDispatcher {
 			removeEventListenerType(MouseEvent.MOUSE_MOVE);
 			removeEventListenerType(MouseEvent.CLICK);
 			removeEventListenerType(Event.CHANGE);
+			
+			for (child in listChildComponents()) {
+				child.enabled = false;
+			}
 		} else {
 			sprite.alpha = 1;
 			if (eventListenersCopy != null) {
@@ -496,7 +428,7 @@ class Component implements IEventDispatcher {
 		return text;
 	}
 	
-	public function setText(value:String):String {
+	public function setText(value:String):String { // TODO: potential localization here. Something like @#helloWorld
 		text = value;
 		return value;
 	}
@@ -561,7 +493,7 @@ class Component implements IEventDispatcher {
 	//************************************************************
 	//                  DISPLAY LIST OPERATIONS
 	//************************************************************
-	public function addChild(c:Dynamic):Dynamic {
+	public function addChildAt(c:Dynamic, index:Int):Dynamic {
 		if (c == null) {
 			return c;
 		}
@@ -569,6 +501,10 @@ class Component implements IEventDispatcher {
 		if (ready == false) { // TODO: workaround, if there parent is not ready you can still add children and they will be added when ready
 			if (childrenToAdd == null) {
 				childrenToAdd = new Array<Dynamic>();
+			}
+			if (Std.is(c, Component)) {
+				c.root = this.root;
+				c.parent = this;
 			}
 			childrenToAdd.push(c);
 			return null;
@@ -578,13 +514,20 @@ class Component implements IEventDispatcher {
 			childComponents.push(c);
 			c.root = this.root;
 			c.parent = this;
+			if (this.enabled == false) {
+				cast(c, Component).enabled = false;
+			}
 			c = untyped c.sprite;
 		}
 		
-		sprite.addChild(c);
+		sprite.addChildAt(c, index);
 		calcSize();
-		repositionChildren();
+		layout.repositionChildren();
 		return c;
+	}
+	
+	public function addChild(c:Dynamic):Dynamic {
+		return addChildAt(c, sprite.numChildren);
 	}
 	
 	public function contains(c:Dynamic):Bool {
@@ -607,7 +550,7 @@ class Component implements IEventDispatcher {
 		var r:Dynamic = null;
 		r = sprite.removeChild(c);
 		calcSize();
-		repositionChildren();
+		layout.repositionChildren();
 		return r;
 	}
 	
@@ -670,6 +613,7 @@ class Component implements IEventDispatcher {
 		}
 		return arr;
 	}
+	
 	//************************************************************
 	//                  HELPERS
 	//************************************************************
