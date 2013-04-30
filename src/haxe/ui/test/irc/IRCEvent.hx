@@ -9,6 +9,7 @@ class IRCEvent extends Event {
 	public static var DATA_RECEIVED:String = "DataReceived";
 	public static var DATA_SENT:String = "DataSent";
 	public static var ERROR:String = "Error";
+	public static var SYSTEM_MESSAGE :String = "SystemMessage";
 	
 	public var data:Dynamic;
 	

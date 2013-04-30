@@ -39,11 +39,12 @@ class TabBar extends ScrollView {
 	//************************************************************
 	//                  TAB FUNCTIONS
 	//************************************************************
-	public function addTab(title:String, additionalStyleNames:String = null):Button {
+	public function addTab(title:String, buttonId:String = null):Button {
 		var button:Button = new Button();
-		//button.inheritStylesFrom = "TabBar.tab";
-		//button.addStyleName("TabBar.tab");
-		//button.addStyleName(additionalStyleNames);
+		if (buttonId != null) {
+			button.id = buttonId;
+		}
+		button.styles = "tab";
 		button.toggle = true;
 		button.text = title;
 		button.allowSelection = false;

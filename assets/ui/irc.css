@@ -1,0 +1,82 @@
+TabBar #home {
+	icon: icons/home_16.png;
+}
+
+TabBar #ircTab {
+	icon: icons/settings_16.png;
+}
+
+TabBar #ircChannel {
+	icon: icons/user_16.png;
+}
+
+#ircTabData ListViewItem {
+	backgroundColor:0xFFFFFF;
+	backgroundImage: null;
+}
+
+#ircTabData {
+	backgroundImage: null;
+	spacingX: 2;
+	spacingY: 2;
+	paddingLeft: 0;
+	paddingRight: 0;
+	paddingBottom: 0;
+	paddingTop: 0;
+}
+
+#ircChannelData {
+	backgroundImage: null;
+	spacingX: 2;
+	spacingY: 2;
+	paddingLeft: 0;
+	paddingRight: 0;
+	paddingBottom: 0;
+	paddingTop: 0;
+}
+
+#ircChannelData ListViewContent {
+	spacingY: 5;
+	backgroundColor:0xFFFFFF;
+}
+
+#ircChannelData ListViewItem {
+	backgroundColor:0xFFFFFF;
+	borderColor: 0xCCCCCC;
+	borderSize: 0;
+	cornerRadius: 0;
+	paddingLeft: 0;
+	paddingRight: 0;
+	paddingBottom: 0;
+	paddingTop: 0;
+}
+
+#ircChannelData ListViewItem:over {
+	backgroundImage: null;
+}
+
+#ircChannelData ListViewItem:selected {
+	backgroundImage: null;
+}
+
+
+#ircChannelData ListViewItem #listViewText {
+	fontSize: 12;
+	color: 0x888888;
+}
+
+#ircChannelData ListViewItem #listViewSubtext {
+	fontSize: 13;
+	color: 0x000000;
+}
+
+#ircChannelData ListViewItem #listViewSubtext:selected {
+	color: 0x000000;
+}
+
+BusyPopup {
+	backgroundImage: embedded://skins/windows/popup.png;
+	backgroundImageScale9: 8,8,341,28;
+	backgroundImageRect: 0, 58, 349, 36;
+	width: 200;
+}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <vbox>
-	<listview id="data" width="100%" height="100%" styles="ChatList" />
+	<listview id="ircChannelData" width="100%" height="100%" />
 	
 	<hbox width="100%">
 		<textinput text="hello!" id="dataToSend" width="100%" />

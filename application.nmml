@@ -51,6 +51,12 @@
 	<haxeflag name="-resource" value="assets/ui/ircChannelTab.xml@ui/ircChannelTab.xml" />
 	<haxeflag name="-resource" value="assets/ui/createConnectionPopup.xml@ui/createConnectionPopup.xml" />
 	<haxeflag name="-resource" value="assets/ui/joinChannelPopup.xml@ui/joinChannelPopup.xml" />
+	<haxeflag name="-resource" value="assets/ui/irc.css@ui/irc.css" />
+	<haxeflag name="-resource" value="assets/ui/android/irc-android.css@ui/android/irc-android.css" />
+
+	<haxeflag name="-resource" value="assets/icons/home_16.png@icons/home_16.png" />
+	<haxeflag name="-resource" value="assets/icons/user_16.png@icons/user_16.png" />
+	<haxeflag name="-resource" value="assets/icons/settings_16.png@icons/settings_16.png" />
 	
 	<haxeflag name="-resource" value="assets/skins/gradient/gradient.css@skins/gradient/gradient.css" />
 	

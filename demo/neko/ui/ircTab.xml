@@ -10,10 +10,9 @@
 			paddingLeft: 0;
 		}
 	</style>
-	<listview id="data" width="100%" height="100%" styles="ChatList" />
-	
-	<hbox width="100%">
-		<textinput text="hello!" id="dataToSend" width="100%" />
-		<button text="Send" id="sendButton" />
+	<hbox>
+		<button text="Join Channel" id="joinChannelButton"/>
 	</hbox>
+	
+	<listview id="ircTabData" width="100%" height="100%" />
 </vbox>

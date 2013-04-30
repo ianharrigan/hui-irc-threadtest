@@ -28,6 +28,10 @@ class IRCController extends Controller {
 		});
 
 		controller.attachEvent("connectButton", MouseEvent.CLICK, function (e) {
+			if (connection != null) {
+				connection.close();
+				connection = null;
+			}
 			var server:String = controller.getComponent("server").text;
 			var nickname:String = controller.getComponent("nickname").text;
 			if (connection == null) {
@@ -35,16 +39,28 @@ class IRCController extends Controller {
 				
 				connection = new IRCConnection(server);
 				connection.addEventListener(IRCEvent.CONNECTED, function(e) {
-					Popup.hidePopup(connectingPopup);
 					Popup.hidePopup(createConnectionPopup);
+					Popup.hidePopup(connectingPopup);
 					
+					connectingPopup = Popup.showBusy(view.root, "Logging in as " + nickname + "...");
+					connection.login(nickname);
+				});
+				
+				connection.addEventListener(IRCEvent.LOGGED_IN, function(e) {
+					Popup.hidePopup(connectingPopup);
 					var tabController:IRCTabController = new IRCTabController(connection, nickname);
-					tabController.view.text = server + ":6667";
+					//tabController.view.text = server + ":6667";
+					tabController.view.id = "ircTab";
 					getComponentAs("mainTabs", TabView).addChild(tabController.view);
 					getComponentAs("mainTabs", TabView).selectedIndex = getComponentAs("mainTabs", TabView).pageCount - 1;
 				});
 				
-				connectingPopup = Popup.showBusy(view.root, "Connecting...");
+				connection.addEventListener(IRCEvent.ERROR, function (e:IRCEvent) {
+					Popup.hidePopup(connectingPopup);
+					Popup.showSimple(view.root, "Problem connecting to server:\n" + e.data, "Error Connecting");
+				});
+				
+				connectingPopup = Popup.showBusy(view.root, "Connecting to " + server +"...");
 				connection.start();
 			}
 		});

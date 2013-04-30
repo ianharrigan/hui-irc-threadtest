@@ -39,10 +39,32 @@ class IRCConnection extends GreenThread {
 			socket.addEventListener(ProgressEvent.SOCKET_DATA, this.onData);
 			socket.connect(host, 6667);
 		#else
-			socket.connect(new Host(host), 6667);
-			socket.setBlocking(false);
-			dispatchEvent(new IRCEvent(IRCEvent.CONNECTED));
+			try {
+				socket.connect(new Host(host), 6667);
+				socket.setBlocking(false);
+				dispatchEvent(new IRCEvent(IRCEvent.CONNECTED));
+			} catch (e:Dynamic) {
+				dispatchEvent(new IRCEvent(IRCEvent.ERROR, e));
+			}
 		#end
+	}
+	
+	public function close():Void {
+		stop();
+		if (socket != null) {
+			#if flash
+				socket.removeEventListener(Event.CLOSE, this.onClose);
+				socket.removeEventListener(Event.CONNECT, this.onConnect);
+				socket.removeEventListener(IOErrorEvent.IO_ERROR, this.onError);
+				socket.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, this.onError);
+				socket.removeEventListener(ProgressEvent.SOCKET_DATA, this.onData);
+				if (socket.connected) {
+					socket.close();
+				}
+			#else
+				socket.close();
+			#end
+		}
 	}
 	
 	private var data:String = "";
@@ -56,7 +78,7 @@ class IRCConnection extends GreenThread {
 	}
 	
 	private function onError(event:IOErrorEvent):Void {
-		trace("onError");
+		dispatchEvent(new IRCEvent(IRCEvent.ERROR, event.text));
 	}
 	
 	private function onData(event:ProgressEvent):Void {
@@ -99,13 +121,54 @@ class IRCConnection extends GreenThread {
 			if (line.indexOf("004") != -1) {
 				dispatchEvent(new IRCEvent(IRCEvent.LOGGED_IN));
 			} if (line.indexOf("JOIN") != -1) {
-				if (line.indexOf(nickname) != -1) {
+				var arr:Array<String> = line.split(" ");
+				var extractedNickname = extractNickname(arr[0]);
+				if (extractedNickname == nickname) {
 					// joined channel
-					var arr:Array<String> = line.split(" ");
 					dispatchEvent(new IRCEvent(IRCEvent.JOINED_CHANNEL, arr[2] ));
+				} else {
+					dispatchEvent(new IRCEvent(IRCEvent.SYSTEM_MESSAGE, extractedNickname + " joined " + arr[2]));
 				}
+			} else if (line.indexOf("QUIT") != -1) {
+				var arr:Array<String> = line.split(" ");
+				var extractedNickname = extractNickname(arr[0]);
+				if (extractedNickname == nickname) {
+				} else {
+					dispatchEvent(new IRCEvent(IRCEvent.SYSTEM_MESSAGE, extractedNickname + " quit (" + joinString(arr, 2) + ")"));
+				}
+			}  else if (line.indexOf("PART") != -1) {
+				var arr:Array<String> = line.split(" ");
+				var extractedNickname = extractNickname(arr[0]);
+				if (extractedNickname == nickname) {
+				} else {
+					dispatchEvent(new IRCEvent(IRCEvent.SYSTEM_MESSAGE, extractedNickname + " left " + arr[2]));
+				}
+			} else if (line.substr(0, 4).toUpperCase() == "PING") {
+				writeString("PONG " + line.substr(5) + "\r\n");
+			} else if (line.indexOf("432") != -1) {
+				dispatchEvent(new IRCEvent(IRCEvent.ERROR, "Invalid nickname" ));
+			} else if (line.indexOf("433") != -1) {
+				dispatchEvent(new IRCEvent(IRCEvent.ERROR, "Nickname is already in use" ));
 			}
 		}
+	}
+	
+	private function joinString(arr:Array<String>, start:Int):String {
+		return arr.splice(start, arr.length).join(" ");
+	}
+	
+	private function extractNickname(s:String):String {
+		var nickname:String = s;
+		var n:Int = s.indexOf(":");
+		if (n != -1) {
+			nickname = nickname.substr(n+1, nickname.length);
+		}
+		n = s.indexOf("!");
+		if (n != -1) {
+			nickname = nickname.substr(0, n-1);
+		}
+		
+		return nickname;
 	}
 	
 	public function writeString(s:String):Void {

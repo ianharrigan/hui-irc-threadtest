@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <tabview id="mainTabs">
-	<vbox text="Home">
+	<style resource="ui/irc.css" />
+	<style resource="ui/android/irc-android.css" if="androidTheme" />
+	<style resource="ui/android/irc-gradient.css" if="gradientTheme" />
+	
+	<vbox text="Home" id="home">
 		<button text="New Connection" id="createConnectionButton"/>
 	</vbox>
-	
-	<!--
-	<vbox text="Raw">
-		<listview width="100%" height="100%" id="dataList">
-		</listview>
-		<hbox width="100%">
-			<textinput width="100%" />
-			<button text="Send"/>
-		</hbox>
-	</vbox>
-	-->
+
 </tabview>

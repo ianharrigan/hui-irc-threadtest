@@ -1,4 +1,5 @@
 package haxe.ui.containers;
+import haxe.ui.style.StyleManager;
 import nme.display.DisplayObject;
 import nme.events.Event;
 import haxe.ui.controls.Button;
@@ -71,12 +72,7 @@ class TabView extends Component {
 			comp.addChild(c);
 		}
 		
-		var additionalStyles:String = "";
-		var button:Button = tabs.addTab(comp.text, additionalStyles);
-		button.styles = "tab";
-		if (comp.id != null) {
-			button.id = comp.id;
-		}
+		var button:Button = tabs.addTab(comp.text, comp.id);
 		
 		comp.percentWidth = 100;
 		comp.percentHeight = 100;
