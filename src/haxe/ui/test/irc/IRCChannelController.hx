@@ -5,6 +5,7 @@ import haxe.ui.controls.Button;
 import haxe.ui.core.ComponentParser;
 import haxe.ui.core.Controller;
 import nme.events.Event;
+import nme.events.KeyboardEvent;
 import nme.events.MouseEvent;
 
 class IRCChannelController extends Controller {
@@ -18,17 +19,28 @@ class IRCChannelController extends Controller {
 		this.channel = channel;
 		connection.addEventListener(IRCEvent.DATA_RECEIVED, onDataReceived);
 		getComponentAs("sendButton", Button).addEventListener(MouseEvent.CLICK, function(e) {
-			var data:String = getComponent("dataToSend").text;
-			connection.writeString("PRIVMSG " + channel + " :" + data + "\r\n");
-			var list:ListView = getComponentAs("ircChannelData", ListView);
-			list.dataSource.add( { text: "Me:", subtext: data } );
-			list.vscrollPosition = list.vscrollMax;
+			sendData();
+		});
+		
+		getComponent("dataToSend").addEventListener(KeyboardEvent.KEY_DOWN, function (e:KeyboardEvent) {
+			if (e.keyCode == 13) {
+				sendData();
+			}
 		});
 		
 		connection.addEventListener(IRCEvent.SYSTEM_MESSAGE, function (e:IRCEvent) {
 			var list:ListView = getComponentAs("ircChannelData", ListView);
 			list.dataSource.add( { text: e.data } );
 		});
+	}
+	
+	private function sendData():Void {
+		var data:String = getComponent("dataToSend").text;
+		connection.writeString("PRIVMSG " + channel + " :" + data + "\r\n");
+		var list:ListView = getComponentAs("ircChannelData", ListView);
+		list.dataSource.add( { text: "Me:", subtext: data } );
+		list.vscrollPosition = list.vscrollMax;
+		getComponent("dataToSend").text = "";
 	}
 	
 	private function onDataReceived(event:IRCEvent):Void {
