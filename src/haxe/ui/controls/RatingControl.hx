@@ -8,7 +8,7 @@ import haxe.ui.core.Component;
 class RatingControl extends HBox {
 	private var valueControls:Array<ValueControl>;
 	
-	@:isVar var rating(get_rating, set_rating):Int;
+	@:isVar public var rating(get_rating, set_rating):Int;
 	
 	public var max:Int = 5;
 	
