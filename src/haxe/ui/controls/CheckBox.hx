@@ -9,8 +9,8 @@ class CheckBox extends Component {
 	private var valueControl:ValueControl;
 	private var textControl:Label;
 	
-	public var selected(getSelected, setSelected):Bool;
-	public var value(getValue, setValue):String = "unselected";
+	public var selected(get_selected, set_selected):Bool;
+	public var value(get_value, set_value):String = "unselected";
 	
 	public function new() {
 		super();
@@ -78,20 +78,20 @@ class CheckBox extends Component {
 	//************************************************************
 	//                  GETTERS AND SETTERS
 	//************************************************************
-	public function getSelected():Bool {
+	public function get_selected():Bool {
 		return (valueControl.value == "selected");
 	}
 	
-	public function setSelected(value:Bool):Bool {
+	public function set_selected(value:Bool):Bool {
 		valueControl.value = (value == true) ? "selected" : "unselected";
 		return value;
 	}
 	
-	public function getValue():String {
+	public function get_value():String {
 		return valueControl.value;
 	}
 	
-	public function setValue(value:String):String {
+	public function set_value(value:String):String {
 		valueControl.value = value;
 		return value;
 	}

@@ -11,7 +11,7 @@ class HSlider extends Component {
 	
 	private var min:Float = 0;
 	private var max:Float = 100;
-	public var value(default, setValue):Float = 50;
+	public var value(default, set_value):Float = 50;
 
 	private var mouseDownOffset:Float = -1; // the offset from the thumb ypos where the mouse event was detected
 	
@@ -92,7 +92,7 @@ class HSlider extends Component {
 	//************************************************************
 	//                  GETTERS AND SETTERS
 	//************************************************************
-	public function setValue(value:Float):Float {
+	public function set_value(value:Float):Float {
 		if (value < min) {
 			value = min;
 		}

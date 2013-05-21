@@ -21,26 +21,26 @@ class Component implements IEventDispatcher {
 	private var childComponents:Array<Component>;
 	
 	public var id:String;
-	public var sprite(getSprite, null):Sprite;
-	public var x(getX, setX):Float = 0;
-	public var y(getY, setY):Float = 0;
-	public var width(getWidth, setWidth):Float = 0;
-	public var height(getHeight, setHeight):Float = 0;
+	public var sprite(get_sprite, null):Sprite;
+	public var x(get_x, set_x):Float = 0;
+	public var y(get_y, set_y):Float = 0;
+	#if haxe3 @:isVar #end public var width(get_width, set_width):Float = 0;
+	#if haxe3 @:isVar #end public var height(get_height, set_height):Float = 0;
 	public var percentWidth:Int = -1;
 	public var percentHeight:Int = -1;
-	public var visible(getVisible, setVisible):Bool;
-	public var innerWidth(getInnerWidth, null):Float;
-	public var innerHeight(getInnerHeight, null):Float;
-	public var enabled(default, setEnabled):Bool = true;
-	public var text(getText, setText):String = "";
+	public var visible(get_visible, set_visible):Bool;
+	public var innerWidth(get_innerWidth, null):Float;
+	public var innerHeight(get_innerHeight, null):Float;
+	public var enabled(default, set_enabled):Bool = true;
+	#if haxe3 @:isVar #end public var text(get_text, set_text):String = "";
 	
 	private var stateNames:Array<String>;
-	public var registeredStateNames(getRegisteredStateNames, null):Array<String>;
-	private var stateStyles:Hash<Dynamic>;
-	public var currentStyle(getCurrentStyle, setCurrentStyle):Dynamic;
+	public var registeredStateNames(get_registeredStateNames, null):Array<String>;
+	private var stateStyles:#if haxe3 Map <String, #else Hash <#end Dynamic>;
+	#if haxe3 @:isVar #end public var currentStyle(get_currentStyle, set_currentStyle):Dynamic;
 	
-	public var stageX(getStageX, null):Float;
-	public var stageY(getStageY, null):Float;
+	public var stageX(get_stageX, null):Float;
+	public var stageY(get_stageY, null):Float;
 
 	public var horizontalAlign:String;
 	public var verticalAlign:String;
@@ -58,8 +58,8 @@ class Component implements IEventDispatcher {
 	
 	private var childrenToAdd:Array<Dynamic>; // TODO: this is a workaround so you can add children before the parent is ready
 
-	private var eventListeners:Hash < List < Dynamic->Void >> ;
-	private var eventListenersCopy:Hash < List < Dynamic->Void >> ; // when we disable a component we will hold onto a subset of event listeners so if we reenable it everything works
+	private var eventListeners:#if haxe3 Map <String, #else Hash <#end List < Dynamic->Void >> ;
+	private var eventListenersCopy:#if haxe3 Map <String, #else Hash <#end List < Dynamic->Void >> ; // when we disable a component we will hold onto a subset of event listeners so if we reenable it everything works
 	
 	public var styles:String;
 	public var layout:Layout;
@@ -67,7 +67,7 @@ class Component implements IEventDispatcher {
 	public function new() {
 		registerState("normal");
 		childComponents = new Array<Component>();
-		eventListeners = new Hash < List < Dynamic->Void >>();
+		eventListeners = new #if haxe3 Map <String, #else Hash <#end List < Dynamic->Void >>();
 		sprite = new Sprite();
 		
 		addEventListener(Event.ADDED_TO_STAGE, onReady);
@@ -175,7 +175,7 @@ class Component implements IEventDispatcher {
 	//************************************************************
 	//                  STYLE FUNCTIONS
 	//************************************************************
-	public function getRegisteredStateNames():Array<String> {
+	public function get_registeredStateNames():Array<String> {
 		return stateNames;
 	}
 	
@@ -208,11 +208,11 @@ class Component implements IEventDispatcher {
 		}
 	}
 	
-	public function getCurrentStyle():Dynamic {
+	public function get_currentStyle():Dynamic {
 		return currentStyle;
 	}
 	
-	public function setCurrentStyle(value:Dynamic):Dynamic {
+	public function set_currentStyle(value:Dynamic):Dynamic {
 		currentStyle = value;
 		applyStyle();
 		return value;
@@ -226,9 +226,9 @@ class Component implements IEventDispatcher {
 		
 		currentStyle = StyleManager.buildStyle(this);
 		if (stateStyles == null) {
-			stateStyles = new Hash<Dynamic>();
+			stateStyles = new #if haxe3 Map <String, #else Hash <#end Dynamic>();
 		}
-		for (state in getRegisteredStateNames()) {
+		for (state in get_registeredStateNames()) {
 			var stateStyle:Dynamic = StyleManager.buildStyle(this, state);
 			stateStyles.set(state, stateStyle);
 		}
@@ -283,15 +283,15 @@ class Component implements IEventDispatcher {
 	//************************************************************
 	//                  GETTERS AND SETTERS
 	//************************************************************
-	public function getSprite():Sprite {
+	public function get_sprite():Sprite {
 		return sprite;
 	}
 	
-	public function getX():Float {
+	public function get_x():Float {
 		return rawX;
 	}
 
-	public function setX(value:Float):Float {
+	public function set_x(value:Float):Float {
 		rawX = value;
 		if (parent != null && parent.layout != null) {
 			value += parent.layout.padding.left;
@@ -300,11 +300,11 @@ class Component implements IEventDispatcher {
 		return rawX;
 	}
 	
-	public function getY(): Float {
+	public function get_y(): Float {
 		return rawY;
 	}
 
-	public function setY(value:Float):Float {
+	public function set_y(value:Float):Float {
 		rawY = value;
 		if (parent != null && parent.layout != null) {
 			value += parent.layout.padding.top;
@@ -313,11 +313,11 @@ class Component implements IEventDispatcher {
 		return rawY;
 	}
 	
-	public function getWidth():Float {
+	public function get_width():Float {
 		return width;
 	}
 	
-	public function setWidth(value:Float):Float {
+	public function set_width(value:Float):Float {
 		if (value == width) {
 			return value;
 		}
@@ -327,11 +327,11 @@ class Component implements IEventDispatcher {
 		return value;
 	}
 	
-	public function getHeight():Float {
+	public function get_height():Float {
 		return height;
 	}
 	
-	public function setHeight(value:Float):Float {
+	public function set_height(value:Float):Float {
 		if (value == height) {
 			return value;
 		}
@@ -341,16 +341,16 @@ class Component implements IEventDispatcher {
 		return value;
 	}
 	
-	public function setVisible(value:Bool):Bool {
+	public function set_visible(value:Bool):Bool {
 		sprite.visible = value;
 		return value;
 	}
 	
-	public function getVisible():Bool {
+	public function get_visible():Bool {
 		return sprite.visible;
 	}
 
-	public function getStageX():Float {
+	public function get_stageX():Float {
 		var xpos:Float = x;// + (root.component.x + root.component.padding.left);
 		var p:Component = this.parent;
 		while (p != null) {
@@ -360,7 +360,7 @@ class Component implements IEventDispatcher {
 		return xpos;
 	}
 	
-	public function getStageY():Float {
+	public function get_stageY():Float {
 		var ypos:Float = y;// + (root.component.y + root.component.padding.top);
 		var p:Component = this.parent;
 		while (p != null) {
@@ -370,15 +370,15 @@ class Component implements IEventDispatcher {
 		return ypos;
 	}
 	
-	public function getInnerWidth():Float {
+	public function get_innerWidth():Float {
 		return width - (layout.padding.left + layout.padding.right);
 	}
 	
-	public function getInnerHeight():Float {
+	public function get_innerHeight():Float {
 		return height - (layout.padding.top + layout.padding.bottom);
 	}
 	
-	public function setEnabled(value:Bool):Bool {
+	public function set_enabled(value:Bool):Bool {
 		if (value == enabled) {
 			return value;
 		}
@@ -424,11 +424,11 @@ class Component implements IEventDispatcher {
 		return value;
 	}
 	
-	public function getText():String {
+	public function get_text():String {
 		return text;
 	}
 	
-	public function setText(value:String):String { // TODO: potential localization here. Something like @#helloWorld
+	public function set_text(value:String):String { // TODO: potential localization here. Something like @#helloWorld
 		text = value;
 		return value;
 	}
@@ -442,12 +442,12 @@ class Component implements IEventDispatcher {
 		}
 		
 		if (eventListeners == null) {
-			eventListeners = new Hash<List<Dynamic->Void>>();
+			eventListeners = new #if haxe3 Map <String, #else Hash <#end List<Dynamic->Void>>();
 		}
 
 		if (enabled == false && (type == MouseEvent.MOUSE_OVER || type == MouseEvent.MOUSE_DOWN || type == MouseEvent.MOUSE_UP || type == MouseEvent.MOUSE_MOVE || type == MouseEvent.CLICK || type == Event.CHANGE)) {
 			if (eventListenersCopy == null) {
-				eventListenersCopy = new Hash<List<Dynamic->Void>>();
+				eventListenersCopy = new #if haxe3 Map <String, #else Hash <#end List<Dynamic->Void>>();
 			}
 			var list:List<Dynamic->Void> = eventListenersCopy.get(type);
 			if (list == null) {
@@ -656,7 +656,7 @@ class Component implements IEventDispatcher {
 			var src:List < Dynamic->Void > = eventListeners.get(type);
 			if (src != null) {
 				if (eventListenersCopy == null) {
-					eventListenersCopy = new Hash < List < Dynamic->Void > > ();
+					eventListenersCopy = new #if haxe3 Map <String, #else Hash <#end List < Dynamic->Void > > ();
 				}
 				
 				var dst:List < Dynamic->Void > = new List < Dynamic->Void > ();

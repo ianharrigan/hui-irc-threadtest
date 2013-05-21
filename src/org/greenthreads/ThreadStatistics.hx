@@ -27,10 +27,10 @@ class ThreadStatistics {
 	public var times:Array<Float>;
 	public var allocationDifferentials:Array<Float>;
 
-	public var meanTime(getMeanTime, null):Float;
-	public var averageDifferential(getAverageDifferential, null):Float;
-	public var maxTime(getMaxTime, null):Float;
-	public var minTime(getMinTime, null):Float;
+	public var meanTime(get_meanTime, null):Float;
+	public var averageDifferential(get_averageDifferential, null):Float;
+	public var maxTime(get_maxTime, null):Float;
+	public var minTime(get_minTime, null):Float;
 	
 	private var currentCycleStart:Int;
 				
@@ -58,11 +58,11 @@ class ThreadStatistics {
 		numTimeouts++;
 	}
 	
-	public function getMeanTime():Float {
+	public function get_meanTime():Float {
 		return totalTime / numCycles; 
 	}
 	
-	public function getAverageDifferential():Float {
+	public function get_averageDifferential():Float {
 		var sum:Float = 0;
 
 		for (differential in allocationDifferentials) {
@@ -72,7 +72,7 @@ class ThreadStatistics {
 		return sum / numCycles;		
 	}
 	
-	public function getMaxTime():Float {
+	public function get_maxTime():Float {
 		var max:Float = 0;
 
 		for (time in times) {
@@ -82,7 +82,7 @@ class ThreadStatistics {
 		return max;		
 	}
 	
-	public function getMinTime():Float {
+	public function get_minTime():Float {
 		var min:Float = Math.POSITIVE_INFINITY;
 
 		for (time in times) {

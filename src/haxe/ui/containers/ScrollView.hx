@@ -33,10 +33,10 @@ class ScrollView extends Component {
 	public var scrollSensitivity:Int = 0; // there are times when you dont want things to scroll instantly
 	private var innerScrolls:Bool = false;
 	
-	public var vscrollPosition(getVScrollPosition, setVScrollPosition):Float;
-	public var hscrollPosition(getHScrollPosition, setHScrollPosition):Float;
-	public var vscrollMax(getVScrollMax, null):Float;
-	public var hscrollMax(getHScrollMax, null):Float;
+	public var vscrollPosition(get_vscrollPosition, set_vscrollPosition):Float;
+	public var hscrollPosition(get_hscrollPosition, set_hscrollPosition):Float;
+	public var vscrollMax(get_vscrollMax, null):Float;
+	public var hscrollMax(get_hscrollMax, null):Float;
 	
 	// kinetic scrolling, adapted from: http://www.nbilyk.com/kinetic-scrolling-example
 	private var kineticPreviousPoints:Array<Point>;
@@ -125,42 +125,42 @@ class ScrollView extends Component {
 	//************************************************************
 	//                  GETTERS / SETTERS
 	//************************************************************
-	public function getVScrollPosition():Float {
+	public function get_vscrollPosition():Float {
 		if (vscroll == null) {
 			return 0;
 		}
 		return vscroll.value;
 	}
 	
-	public function setVScrollPosition(value:Float):Float {
+	public function set_vscrollPosition(value:Float):Float {
 		if (vscroll != null) {
 			vscroll.value = value;
 		}
 		return value;
 	}
 
-	public function getHScrollPosition():Float {
+	public function get_hscrollPosition():Float {
 		if (hscroll == null) {
 			return 0;
 		}
 		return hscroll.value;
 	}
 	
-	public function setHScrollPosition(value:Float):Float {
+	public function set_hscrollPosition(value:Float):Float {
 		if (hscroll != null) {
 			hscroll.value = value;
 		}
 		return value;
 	}
 	
-	public function getVScrollMax():Float {
+	public function get_vscrollMax():Float {
 		if (vscroll == null) {
 			return -1;
 		}
 		return vscroll.max;
 	}
 	
-	public function getHScrollMax():Float {
+	public function get_hscrollMax():Float {
 		if (hscroll == null) {
 			return -1;
 		}

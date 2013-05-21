@@ -8,7 +8,7 @@ import haxe.ui.core.Component;
 class RatingControl extends HBox {
 	private var valueControls:Array<ValueControl>;
 	
-	public var rating(getRating, setRating):Int;
+	#if haxe3 @:isVar #end public var rating(get_rating, set_rating):Int;
 	
 	public var max:Int = 5;
 	
@@ -77,11 +77,11 @@ class RatingControl extends HBox {
 	//************************************************************
 	//                  GETTERS/SETTERS
 	//************************************************************
-	public function getRating():Int {
+	public function get_rating():Int {
 		return rating;
 	}
 	
-	public function setRating(value:Int):Int {
+	public function set_rating(value:Int):Int {
 		rating = value;
 		for (n in 0...valueControls.length) {
 			var vc:ValueControl = valueControls[n];

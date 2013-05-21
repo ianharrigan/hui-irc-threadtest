@@ -9,17 +9,17 @@ class Layout {
 	public var spacingY:Int = 0;
 
 	private var c:Component;
-	public var component(getComponent, setComponent):Component;
+	public var component(get_component, set_component):Component;
 	
 	public function new() {
 		padding = new Rectangle();
 	}
 	
-	public function getComponent():Component {
+	public function get_component():Component {
 		return c;
 	}
 	
-	public function setComponent(value:Component):Component {
+	public function set_component(value:Component):Component {
 		c = value;
 		if (c.currentStyle != null) {
 			if (c.currentStyle.paddingLeft != null) {

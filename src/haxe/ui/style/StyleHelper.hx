@@ -11,9 +11,9 @@ import nme.geom.Point;
 import nme.geom.Rectangle;
 
 class StyleHelper {
-	private static var sectionCache:Hash<BitmapData>;
+	private static var sectionCache:#if haxe3 Map <String, #else Hash <#end BitmapData>;
 	
-	public static function paintCompoundBitmap(g:Graphics, resourceId:String, resourceRect:Rectangle, sourceRects:Hash<Rectangle>, targetRect:Rectangle):Void {
+	public static function paintCompoundBitmap(g:Graphics, resourceId:String, resourceRect:Rectangle, sourceRects:#if haxe3 Map <String, #else Hash <#end Rectangle>, targetRect:Rectangle):Void {
 		targetRect.left = Std.int(targetRect.left);
 		targetRect.top = Std.int(targetRect.top);
 		targetRect.right = Std.int(targetRect.right);
@@ -126,7 +126,7 @@ class StyleHelper {
 	
 	private static function getBitmapSection(resourceId:String, rc:Rectangle = null):BitmapData {
 		if (sectionCache == null) {
-			sectionCache = new Hash<BitmapData>();
+			sectionCache = new #if haxe3 Map <String, #else Hash <#end BitmapData>();
 		}
 		
 		if (rc == null) {
@@ -170,7 +170,7 @@ class StyleHelper {
 				if (style.backgroundColorGradientEnd != null) {
 					var w:Int = Std.int(rc.width);
 					var h:Int = Std.int(rc.height);
-					var colors:Array<Int> = [style.backgroundColor, style.backgroundColorGradientEnd];
+					var colors:Array<UInt> = [style.backgroundColor, style.backgroundColorGradientEnd];
 					var alphas:Array<Int> = [1, 1];
 					var ratios:Array<Int> = [0, 255];
 					var matrix:Matrix = new Matrix();
@@ -221,7 +221,7 @@ class StyleHelper {
 			if (style.backgroundImageScale9 != null) {
 				paintScale9(g, style.backgroundImage, backgroundImageRect, style.backgroundImageScale9, rc);
 			} else {
-				var rects:Hash<Rectangle> = new Hash<Rectangle>();
+				var rects:#if haxe3 Map <String, #else Hash <#end Rectangle> = new #if haxe3 Map <String, #else Hash <#end Rectangle>();
 				var bitmapData:BitmapData = getBitmapSection(style.backgroundImage, backgroundImageRect);
 				rects.set("middle", new Rectangle(0, 0, bitmapData.width, bitmapData.height));
 				paintCompoundBitmap(g, style.backgroundImage, backgroundImageRect, rects, rc);
@@ -244,7 +244,7 @@ class StyleHelper {
 			var x2:Int = Std.parseInt(coords[2]);
 			var y2:Int = Std.parseInt(coords[3]);
 			
-			var rects:Hash<Rectangle> = new Hash<Rectangle>();
+			var rects:#if haxe3 Map <String, #else Hash <#end Rectangle> = new #if haxe3 Map <String, #else Hash <#end Rectangle>();
 			
 			rects.set("top.left", new Rectangle(0, 0, x1, y1));
 			rects.set("top", new Rectangle(x1, 0, x2 - x1, y1));

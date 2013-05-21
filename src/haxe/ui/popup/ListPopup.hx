@@ -61,7 +61,7 @@ class ListPopup extends Popup {
 		hideTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete);
 		Popup.hidePopup(this);
 		if (fnCallback != null) {
-			var item:Dynamic = list.getListItem(list.selectedIndex).itemData;
+			var item:Dynamic = list.get_listItem(list.selectedIndex).itemData;
 			item.index = list.selectedIndex;
 			fnCallback(item);
 		}

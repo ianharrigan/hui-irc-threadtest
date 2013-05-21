@@ -12,7 +12,7 @@ class Label extends Component {
 	private var textControl:TextField;
 	
 	public var wordWrap:Bool = false;
-	public var textCol(default, setTextCol):Int = 0x000000;
+	public var textCol(default, set_textCol):Int = 0x000000;
 	
 	public function new() {
 		super();
@@ -52,7 +52,7 @@ class Label extends Component {
 	//************************************************************
 	//                  GETTERS AND SETTERS
 	//************************************************************
-	public function setTextCol(value:Int):Int {
+	public function set_textCol(value:Int):Int {
 		textCol = value;
 		currentStyle.color = value;
 		var format:TextFormat = new TextFormat(currentStyle.fontName, currentStyle.fontSize, currentStyle.color);
@@ -60,11 +60,11 @@ class Label extends Component {
 		return value;
 	}
 	
-	public override function getText():String {
+	public override function get_text():String {
 		return textControl.text;
 	}
 	
-	public override function setText(value:String):String {
+	public override function set_text(value:String):String {
 		rawText = value;
 		if (ready == true) {
 			textControl.text = value;

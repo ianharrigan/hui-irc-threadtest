@@ -6,7 +6,7 @@ import nme.display.BitmapData;
 import haxe.ui.core.Component;
 
 class Image extends Component {
-	public var resourceId(null, setResourceId):String;
+	public var resourceId(null, set_resourceId):String;
 	
 	private var bmp:Bitmap;
 	private var bmpData:BitmapData;
@@ -25,7 +25,7 @@ class Image extends Component {
 	//************************************************************
 	//                  GETTERS AND SETTERS
 	//************************************************************
-	public function setResourceId(value:String):String {
+	public function set_resourceId(value:String):String {
 		if (bmp != null && contains(bmp)) {
 			removeChild(bmp);
 			bmpData.dispose();
