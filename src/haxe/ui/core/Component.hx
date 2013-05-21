@@ -24,20 +24,20 @@ class Component implements IEventDispatcher {
 	public var sprite(get_sprite, null):Sprite;
 	public var x(get_x, set_x):Float = 0;
 	public var y(get_y, set_y):Float = 0;
-	public var width(get_width, set_width):Float = 0;
-	public var height(get_height, set_height):Float = 0;
+	@:isVar var width(get_width, set_width):Float = 0;
+	@:isVar var height(get_height, set_height):Float = 0;
 	public var percentWidth:Int = -1;
 	public var percentHeight:Int = -1;
 	public var visible(get_visible, set_visible):Bool;
 	public var innerWidth(get_innerWidth, null):Float;
 	public var innerHeight(get_innerHeight, null):Float;
 	public var enabled(default, set_enabled):Bool = true;
-	public var text(get_text, set_text):String = "";
+	@:isVar var text(get_text, set_text):String = "";
 	
 	private var stateNames:Array<String>;
 	public var registeredStateNames(get_registeredStateNames, null):Array<String>;
 	private var stateStyles:#if haxe3 Map <String, #else Hash <#end Dynamic>;
-	public var currentStyle(get_currentStyle, set_currentStyle):Dynamic;
+	@:isVar var currentStyle(get_currentStyle, set_currentStyle):Dynamic;
 	
 	public var stageX(get_stageX, null):Float;
 	public var stageY(get_stageY, null):Float;
