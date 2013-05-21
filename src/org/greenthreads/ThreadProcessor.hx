@@ -29,8 +29,8 @@ class ThreadProcessor {
 	private var activeThreads:Array<GreenThread>;
 	private var errorTerm:Int = 0;
 	
-	public var timerDelay(getTimerDelay, null):Float;
-	public var share(getShare, setShare):Float;
+	public var timerDelay(get_timerDelay, null):Float;
+	public var share(get_share, set_share):Float;
 	
 	public function new(share:Float = 0.99) {
 		if (_instance == null) {
@@ -118,15 +118,15 @@ class ThreadProcessor {
 		errorTerm = ( errorTerm + delta ) >> 1;
 	}
 				
-	public function getTimerDelay():Float {
+	public function get_timerDelay():Float {
 		return 1000 / frameRate;
 	}
                 
-	public function getShare():Float {
+	public function get_share():Float {
 		return _share;
 	}
 
-	public function setShare(percent:Float):Float {
+	public function set_share(percent:Float):Float {
 		_share = percent;
 		return percent;
 	}

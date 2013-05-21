@@ -13,11 +13,11 @@ class Root {
 	public var component:Component;
 	private var initOptions:Dynamic;
 	
-	public var width(getWidth, null):Float;
-	public var height(getHeight, null):Float;
+	public var width(get_width, null):Float;
+	public var height(get_height, null):Float;
 	
 	private var disabledOverlay:Component;
-	public var enabled(default, setEnabled):Bool = true;
+	public var enabled(default, set_enabled):Bool = true;
 	
 	public static function createRoot(options:Dynamic = null):Root {
 		if (roots == null) {
@@ -150,19 +150,19 @@ class Root {
 	//************************************************************
 	//                  GETTERS AND SETTERS
 	//************************************************************
-	public function getWidth():Float {
+	public function get_width():Float {
 		if (component == null) {
 		}
 		return component.width;
 	}
 	
-	public function getHeight():Float {
+	public function get_height():Float {
 		if (component == null) {
 		}
 		return component.height;
 	}
 
-	public function setEnabled(value:Bool):Bool {
+	public function set_enabled(value:Bool):Bool {
 		enabled = value;
 		if (value == true) {
 			if (disabledOverlay != null) {

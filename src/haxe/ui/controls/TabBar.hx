@@ -11,7 +11,7 @@ import haxe.ui.style.StyleManager;
 class TabBar extends ScrollView {
 	private var buttons:Array<Button>;
 	
-	public var selectedIndex(default, setSelectedIndex):Int = 0;
+	public var selectedIndex(default, set_selectedIndex):Int = 0;
 	
 	public function new() {
 		super();
@@ -64,13 +64,13 @@ class TabBar extends ScrollView {
 	}
 	
 	private function mouseClickButton(index:Int):Void {
-		setSelectedIndex(index);
+		set_selectedIndex(index);
 	}
 	
 	//************************************************************
 	//                  GETTERS AND SETTERS
 	//************************************************************
-	public function setSelectedIndex(value:Int):Int {
+	public function set_selectedIndex(value:Int):Int {
 		if (value != selectedIndex) {
 			for (n in 0...buttons.length) {
 				var button:Button = buttons[n];

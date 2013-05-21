@@ -22,14 +22,14 @@ class ThreadEvent extends Event {
 	public static var TIMEOUT:String = "timeout";
 	 
 	private var _thread:GreenThread;
-	public var thread(getThread, null):GreenThread;
+	public var thread(get_thread, null):GreenThread;
 	
 	public function new(type:String, thread:GreenThread = null, bubbles:Bool=false, cancelable:Bool=false) {
 		super(type, bubbles, cancelable);
 		this._thread = thread;
 	}
 	
-	public function getThread():GreenThread {
+	public function get_thread():GreenThread {
 		return _thread;
 	}
 }

@@ -8,10 +8,10 @@ class OptionBox extends Component {
 	private var valueControl:ValueControl;
 	private var textControl:Label;
 	
-	public var selected(getSelected, setSelected):Bool;
+	public var selected(get_selected, set_selected):Bool;
 	
 	private static var groups:#if haxe3 Map <String, #else Hash <#end Array<OptionBox>>;
-	public var group(default, setGroup):String;
+	public var group(default, set_group):String;
 	
 	public function new() {
 		super();
@@ -81,11 +81,11 @@ class OptionBox extends Component {
 	//************************************************************
 	//                  GETTERS AND SETTERS
 	//************************************************************
-	public function getSelected():Bool {
+	public function get_selected():Bool {
 		return (valueControl.value == "selected");
 	}
 	
-	public function setSelected(value:Bool):Bool {
+	public function set_selected(value:Bool):Bool {
 		valueControl.value = (value == true) ? "selected" : "unselected";
 		if (group != null && value == true) { // set all the others in group
 			var arr:Array<OptionBox> = groups.get(group);
@@ -100,16 +100,16 @@ class OptionBox extends Component {
 		return value;
 	}
 	
-	public function getValue():String {
+	public function get_value():String {
 		return valueControl.value;
 	}
 	
-	public function setValue(value:String):String {
+	public function set_value(value:String):String {
 		valueControl.value = value;
 		return value;
 	}
 	
-	public function setGroup(value:String):String { 
+	public function set_group(value:String):String { 
 		if (value != null) {
 			var arr:Array<OptionBox> = groups.get(value);
 			if (arr != null) {

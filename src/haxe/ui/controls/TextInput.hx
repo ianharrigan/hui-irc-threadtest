@@ -81,11 +81,11 @@ class TextInput extends Component {
 	//************************************************************
 	//                  GETTERS AND SETTERS
 	//************************************************************
-	public override function getText():String {
+	public override function get_text():String {
 		return textControl.text;
 	}
 	
-	public override function setText(value:String):String {
+	public override function set_text(value:String):String {
 		rawText = value;
 		if (ready == true) {
 			textControl.text = value;

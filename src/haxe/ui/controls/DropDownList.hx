@@ -54,7 +54,7 @@ class DropDownList extends Selector {
 		hideList();
 		this.selected = false;
 		
-		this.text = list.getListItem(list.selectedIndex).text;
+		this.text = list.get_listItem(list.selectedIndex).text;
 		
 		dispatchEvent(event);
 	}

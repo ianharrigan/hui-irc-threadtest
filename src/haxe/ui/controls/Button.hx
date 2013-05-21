@@ -15,7 +15,7 @@ import haxe.ui.style.StyleManager;
 class Button extends Component {
 	private var rawText:String = "";
 	public var toggle:Bool = false;
-	public var selected(default, setSelected):Bool = false;
+	public var selected(default, set_selected):Bool = false;
 	
 	private var label:Label;
 	
@@ -175,7 +175,7 @@ class Button extends Component {
 	//************************************************************
 	//                  GETTERS AND SETTERS
 	//************************************************************
-	public function setSelected(value:Bool):Bool {
+	public function set_selected(value:Bool):Bool {
 		selected = value;
 		if (toggle == true) {
 			if (ready == true) {
@@ -189,11 +189,11 @@ class Button extends Component {
 		return value;
 	}
 
-	public override function getText():String {
+	public override function get_text():String {
 		return label.text;
 	}
 	
-	public override function setText(value:String):String {
+	public override function set_text(value:String):String {
 		rawText = value;
 		if (ready) {
 			label.text = value;

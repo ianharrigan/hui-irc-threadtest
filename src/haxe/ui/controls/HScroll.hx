@@ -16,8 +16,8 @@ class HScroll extends Component {
 
 	public var min:Float = 0;
 	public var max:Float = 100;
-	public var value(default, setValue):Float = 0;
-	public var pageSize(default, setPageSize):Float = 0;
+	public var value(default, set_value):Float = 0;
+	public var pageSize(default, set_pageSize):Float = 0;
 	private var thumbMinSize:Float = 20;
 	
 	private var mouseDownOffset:Float = -1; // the offset from the thumb ypos where the mouse event was detected
@@ -192,7 +192,7 @@ class HScroll extends Component {
 	//************************************************************
 	//                  GETTERS/SETTERS
 	//************************************************************
-	public function setValue(newValue:Float):Float {
+	public function set_value(newValue:Float):Float {
 		if (newValue < min) {
 			newValue = min;
 		}
@@ -206,7 +206,7 @@ class HScroll extends Component {
 		return newValue;
 	}
 
-	public function setPageSize(value:Float):Float {
+	public function set_pageSize(value:Float):Float {
 		pageSize = value;
 		resizeThumb();
 		repositionThumb();

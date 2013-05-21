@@ -15,8 +15,8 @@ class TabView extends Component {
 	
 	private var currentPage:Component;
 	
-	public var selectedIndex(getSelectedIndex, setSelectedIndex):Int;
-	public var pageCount(getPageCount, null):Int;
+	public var selectedIndex(get_selectedIndex, set_selectedIndex):Int;
+	public var pageCount(get_pageCount, null):Int;
 	
 	public function new() {
 		super();
@@ -108,11 +108,11 @@ class TabView extends Component {
 		}
 	}
 	
-	private function getSelectedIndex():Int {
+	private function get_selectedIndex():Int {
 		return tabs.selectedIndex;
 	}
 	
-	public function setSelectedIndex(value:Int):Int {
+	public function set_selectedIndex(value:Int):Int {
 		tabs.selectedIndex = value;
 		var page:Component = pages[tabs.selectedIndex];
 		if (page != null) {
@@ -122,7 +122,7 @@ class TabView extends Component {
 		return value;
 	}
 	
-	private function getPageCount():Int {
+	private function get_pageCount():Int {
 		return pages.length;
 	}
 }

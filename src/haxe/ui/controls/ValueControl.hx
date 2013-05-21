@@ -9,8 +9,8 @@ class ValueControl extends Component {
 	private var valueStyles:#if haxe3 Map <String, #else Hash <#end Dynamic>;
 	private var values:Array<String>;
 
-	public var value(default, setValue):String = "0";
-	public var state(default, setState):String = "normal";
+	public var value(default, set_value):String = "0";
+	public var state(default, set_state):String = "normal";
 
 	public var interactive:Bool = true;
 	
@@ -30,7 +30,7 @@ class ValueControl extends Component {
 		super.initialize();
 
 		for (valueId in values) {
-			for (valueState in getRegisteredStateNames()) {
+			for (valueState in get_registeredStateNames()) {
 				var temp =  valueId + ":" + valueState;
 				var valueStyle:Dynamic = StyleManager.buildStyle(this, temp);
 				if (valueStyle != null) {
@@ -76,7 +76,7 @@ class ValueControl extends Component {
 	//************************************************************
 	//                  GETTERS AND SETTERS
 	//************************************************************
-	public function setValue(newValue:String):String {
+	public function set_value(newValue:String):String {
 		if (value != newValue) {
 			value = newValue;
 			if (ready) {
@@ -86,7 +86,7 @@ class ValueControl extends Component {
 		return value;
 	}
 	
-	public function setState(newState:String):String {
+	public function set_state(newState:String):String {
 		if (state != newState) {
 			state = newState;
 			showValueStyle(this.value, newState);

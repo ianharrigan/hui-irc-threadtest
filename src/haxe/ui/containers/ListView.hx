@@ -22,10 +22,10 @@ import haxe.ui.layout.Layout;
 class ListView extends ScrollView {
 	private var items:Array<ListViewItem>;
 	
-	public var selectedIndex(default, setSelectedIndex):Int = -1;
+	public var selectedIndex(default, set_selectedIndex):Int = -1;
 
-	public var listSize(getListSize, null):Int;
-	public var itemHeight(getItemHeight, null):Float;
+	public var listSize(get_listSize, null):Int;
+	public var itemHeight(get_itemHeight, null):Float;
 
 	public var dataSource:DataSource;
 	
@@ -209,7 +209,7 @@ class ListView extends ScrollView {
 		}
 	}
 	
-	public function getListItem(index:Int):ListViewItem {
+	public function get_listItem(index:Int):ListViewItem {
 		return items[index];
 	}
 	
@@ -228,11 +228,11 @@ class ListView extends ScrollView {
 	//************************************************************
 	//                  GETTERS AND SETTERS
 	//************************************************************
-	public function getListSize():Int {
+	public function get_listSize():Int {
 		return items.length;
 	}
 	
-	public function getItemHeight():Float {
+	public function get_itemHeight():Float {
 		if (items.length == 0) {
 			return 0;
 		}
@@ -248,7 +248,7 @@ class ListView extends ScrollView {
 		return Std.int(cy / n);
 	}
 	
-	public function setSelectedIndex(value:Int):Int {
+	public function set_selectedIndex(value:Int):Int {
 		if (selectedIndex != -1) {
 			items[selectedIndex].showStateStyle("normal");
 		}
@@ -284,8 +284,8 @@ class ListViewEvent extends Event {
 	private var li:ListViewItem;
 	private var c:Component;
 	
-	public var item(getItem, null):ListViewItem;
-	public var typeComponent(getTypeComponent, null):Component;
+	public var item(get_item, null):ListViewItem;
+	public var typeComponent(get_typeComponent, null):Component;
 	
 	public function new(type:String, listItem:ListViewItem, component:Component) {
 		super(type);
@@ -293,11 +293,11 @@ class ListViewEvent extends Event {
 		c = component;
 	}
 	
-	public function getItem():ListViewItem {
+	public function get_item():ListViewItem {
 		return li;
 	}
 	
-	public function getTypeComponent():Component {
+	public function get_typeComponent():Component {
 		return c;
 	}
 }
@@ -312,7 +312,7 @@ class ListViewItem extends Component {
 	
 	private var parentList:ListView;
 	
-	public var subtext(getSubText, setSubText):String;
+	public var subtext(get_subtext, set_subtext):String;
 	
 	private var currentIconAsset:String;
 	
@@ -463,23 +463,23 @@ class ListViewItem extends Component {
 		}
 	}
 	
-	public override function getText():String {
+	public override function get_text():String {
 		return textComponent.text;
 	}
 	
-	public override function setText(value:String):String {
+	public override function set_text(value:String):String {
 		textComponent.text = value;
 		return value;
 	}
 
-	public function getSubText():String {
+	public function get_subtext():String {
 		if (subTextComponent == null) {
 			return "";
 		}
 		return subTextComponent.text;
 	}
 	
-	public function setSubText(value:String):String {
+	public function set_subtext(value:String):String {
 		if (subTextComponent != null) {
 			subTextComponent.text = value;
 		}
