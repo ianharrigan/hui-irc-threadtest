@@ -10,7 +10,7 @@ class OptionBox extends Component {
 	
 	public var selected(getSelected, setSelected):Bool;
 	
-	private static var groups:Hash<Array<OptionBox>>;
+	private static var groups:#if haxe3 Map <String, #else Hash <#end Array<OptionBox>>;
 	public var group(default, setGroup):String;
 	
 	public function new() {
@@ -27,7 +27,7 @@ class OptionBox extends Component {
 		textControl.verticalAlign = "center";
 		
 		if (groups == null) {
-			groups = new Hash<Array<OptionBox>>();
+			groups = new #if haxe3 Map <String, #else Hash <#end Array<OptionBox>>();
 		}
 
 		layout = new HorizonalLayout();

@@ -5,7 +5,7 @@ import nme.events.Event;
 class Controller {
 	public var view:Component;
 	
-	private var namedComponents:Hash<Component>;
+	private var namedComponents:#if haxe3 Map <String, #else Hash <#end Component>;
 	
 	public function new(view:Component) {
 		this.view = view;
@@ -33,7 +33,7 @@ class Controller {
 	}
 	
 	private function refereshNamedComponents():Void {
-		namedComponents = new Hash<Component>();
+		namedComponents = new #if haxe3 Map <String, #else Hash <#end Component>();
 		addNamedComponentsFrom(view);
 	}
 

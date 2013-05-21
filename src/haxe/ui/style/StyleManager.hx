@@ -7,12 +7,12 @@ import nme.display.Graphics;
 import nme.geom.Rectangle;
 
 class StyleManager {
-	private static var styles:Hash<Dynamic>;
+	private static var styles:#if haxe3 Map <String, #else Hash <#end Dynamic>;
 	private static var rules:Array<String>;
 
 	private static function init():Void {
 		if (styles == null) {
-			styles = new Hash<Dynamic>();
+			styles = new #if haxe3 Map <String, #else Hash <#end Dynamic>();
 		}
 		if (rules == null) {
 			rules = new Array<String>();
@@ -20,7 +20,7 @@ class StyleManager {
 	}
 	
 	public static function clear() {
-		styles = new Hash<Dynamic>();
+		styles = new #if haxe3 Map <String, #else Hash <#end Dynamic>();
 		rules = new Array<String>();
 	}
 	

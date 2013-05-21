@@ -36,7 +36,7 @@ class Component implements IEventDispatcher {
 	
 	private var stateNames:Array<String>;
 	public var registeredStateNames(getRegisteredStateNames, null):Array<String>;
-	private var stateStyles:Hash<Dynamic>;
+	private var stateStyles:#if haxe3 Map <String, #else Hash <#end Dynamic>;
 	public var currentStyle(getCurrentStyle, setCurrentStyle):Dynamic;
 	
 	public var stageX(getStageX, null):Float;
@@ -58,8 +58,8 @@ class Component implements IEventDispatcher {
 	
 	private var childrenToAdd:Array<Dynamic>; // TODO: this is a workaround so you can add children before the parent is ready
 
-	private var eventListeners:Hash < List < Dynamic->Void >> ;
-	private var eventListenersCopy:Hash < List < Dynamic->Void >> ; // when we disable a component we will hold onto a subset of event listeners so if we reenable it everything works
+	private var eventListeners:#if haxe3 Map <String, #else Hash <#end List < Dynamic->Void >> ;
+	private var eventListenersCopy:#if haxe3 Map <String, #else Hash <#end List < Dynamic->Void >> ; // when we disable a component we will hold onto a subset of event listeners so if we reenable it everything works
 	
 	public var styles:String;
 	public var layout:Layout;
@@ -67,7 +67,7 @@ class Component implements IEventDispatcher {
 	public function new() {
 		registerState("normal");
 		childComponents = new Array<Component>();
-		eventListeners = new Hash < List < Dynamic->Void >>();
+		eventListeners = new #if haxe3 Map <String, #else Hash <#end List < Dynamic->Void >>();
 		sprite = new Sprite();
 		
 		addEventListener(Event.ADDED_TO_STAGE, onReady);
@@ -226,7 +226,7 @@ class Component implements IEventDispatcher {
 		
 		currentStyle = StyleManager.buildStyle(this);
 		if (stateStyles == null) {
-			stateStyles = new Hash<Dynamic>();
+			stateStyles = new #if haxe3 Map <String, #else Hash <#end Dynamic>();
 		}
 		for (state in getRegisteredStateNames()) {
 			var stateStyle:Dynamic = StyleManager.buildStyle(this, state);
@@ -442,12 +442,12 @@ class Component implements IEventDispatcher {
 		}
 		
 		if (eventListeners == null) {
-			eventListeners = new Hash<List<Dynamic->Void>>();
+			eventListeners = new #if haxe3 Map <String, #else Hash <#end List<Dynamic->Void>>();
 		}
 
 		if (enabled == false && (type == MouseEvent.MOUSE_OVER || type == MouseEvent.MOUSE_DOWN || type == MouseEvent.MOUSE_UP || type == MouseEvent.MOUSE_MOVE || type == MouseEvent.CLICK || type == Event.CHANGE)) {
 			if (eventListenersCopy == null) {
-				eventListenersCopy = new Hash<List<Dynamic->Void>>();
+				eventListenersCopy = new #if haxe3 Map <String, #else Hash <#end List<Dynamic->Void>>();
 			}
 			var list:List<Dynamic->Void> = eventListenersCopy.get(type);
 			if (list == null) {
@@ -656,7 +656,7 @@ class Component implements IEventDispatcher {
 			var src:List < Dynamic->Void > = eventListeners.get(type);
 			if (src != null) {
 				if (eventListenersCopy == null) {
-					eventListenersCopy = new Hash < List < Dynamic->Void > > ();
+					eventListenersCopy = new #if haxe3 Map <String, #else Hash <#end List < Dynamic->Void > > ();
 				}
 				
 				var dst:List < Dynamic->Void > = new List < Dynamic->Void > ();

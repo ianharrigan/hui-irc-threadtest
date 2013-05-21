@@ -6,7 +6,7 @@ import haxe.ui.style.StyleManager;
 
 class ValueControl extends Component {
 	
-	private var valueStyles:Hash<Dynamic>;
+	private var valueStyles:#if haxe3 Map <String, #else Hash <#end Dynamic>;
 	private var values:Array<String>;
 
 	public var value(default, setValue):String = "0";
@@ -20,7 +20,7 @@ class ValueControl extends Component {
 		registerState("down");
 		
 		values = new Array<String>();
-		valueStyles = new Hash<Dynamic>();
+		valueStyles = new #if haxe3 Map <String, #else Hash <#end Dynamic>();
 	}
 	
 	//************************************************************

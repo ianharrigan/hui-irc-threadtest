@@ -1,13 +1,13 @@
 package haxe.ui.style;
 
 class Styles {
-	var styles:Hash<Dynamic>;
+	var styles:#if haxe3 Map <String, #else Hash <#end Dynamic>;
 	var styleRules:Array<String>;
 	
 	public var rules(getStyleRules, null):Iterator<String>;
 	
 	public function new() {
-		styles = new Hash<Dynamic>();
+		styles = new #if haxe3 Map <String, #else Hash <#end Dynamic>();
 		styleRules = new Array<String>();
 	}
 	
