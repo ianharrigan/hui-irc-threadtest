@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<vbox width="100%">
-	<hbox width="100%">
-		<label width="80" text="Server:"/>
-		<textinput text="irc.freenode.net" id="server" width="100%"/>
-	</hbox>
-	<hbox width="100%">
-		<label width="80" text="Name:"/>
-		<textinput text="haxeclient" id="nickname" width="100%"/>
-	</hbox>
+<ui:grid columns="2" width="100%">
 	<!--
-	<hbox width="100%">
-		<label width="80" text="Channel:"/>
-		<textinput text="#irchacks" id="channel" width="100%"/>
-	</hbox>
+	<ui:hbox width="100%">
+		<ui:text autoSize="false" width="45" text="Server:" />
+		<ui:textinput text="irc.freenode.net" id="server" width="100%"/>
+	</ui:hbox>
+	<ui:hbox width="100%">
+		<ui:text autoSize="false" width="45" text="Name:"/>
+		<ui:textinput text="haxeclient" id="nickname" width="100%"/>
+	</ui:hbox>
 	-->
-	<hbox>
-		<button text="Cancel" id="cancelButton" />
-		<button text="Connect" id="connectButton" />
-	</hbox>
-</vbox>
+	<ui:text text="Server:" />
+	<ui:textinput text="irc.freenode.net" id="server" width="100%"/>
+	<ui:text text="Name:"/>
+	<ui:textinput text="haxeclient" id="nickname" width="100%"/>
+</ui:grid>

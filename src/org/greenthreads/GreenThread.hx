@@ -16,17 +16,17 @@
    
 package org.greenthreads;
 
-import nme.events.Event;
-import nme.events.EventDispatcher;
-import nme.events.ProgressEvent;
-import nme.Lib;
+import flash.events.Event;
+import flash.events.EventDispatcher;
+import flash.events.ProgressEvent;
+import flash.Lib;
 
 class GreenThread extends EventDispatcher {
 	private var _debug:Bool;
 	private var _statistics:ThreadStatistics;
 	
-	public var debug(getDebug, setDebug):Bool;
-	public var statistics(getStatistics, null):ThreadStatistics;
+	public var debug(get, set):Bool;
+	public var statistics(get, null):ThreadStatistics;
 	
 	public function new(debug:Bool = false) {
 		super();
@@ -88,16 +88,16 @@ class GreenThread extends EventDispatcher {
 	private function dispatchProgress():Void {
 	}
 	
-	public function getDebug():Bool {
+	public function get_debug():Bool {
 		return _debug;
 	}
 
-	public function setDebug(value:Bool):Bool {
+	public function set_debug(value:Bool):Bool {
 		_debug = value;
 		return value;
 	}
 
-	public function getStatistics():ThreadStatistics {
+	public function get_statistics():ThreadStatistics {
 		if (_statistics == null) {
 			_statistics = new ThreadStatistics();
 		}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<!-- NMML reference: https://gist.github.com/1763850 -->
+	
+	<!-- metadata, make sure 'package' is at least 3 segments (ie. com.mycompany.myproject) -->
+	<meta title="IRC Client" package="haxe.ui.test.irc" version="1.0.0" company="Ian Harrigan" />
+	
+	<!-- output -->
+	<app main="haxe.ui.test.irc.Main" file="irc" path="bin" />
+	
+	<window background="#FFFFFF" fps="60" />
+	<window width="380" height="480" unless="mobile" />
+	
+	<!-- classpath, haxe libs -->
+	<source path="src" />
+	<haxelib name="openfl" />
+	<haxelib name="actuate" />
+	
+	<!-- assets -->
+	<icon path="assets/nme.svg" />
+	<icon path="assets/icons/application_16.png" width="16" height="16"/>
+	<icon path="assets/icons/application_24.png" width="24" height="24"/>
+	<icon path="assets/icons/application_32.png" width="32" height="32"/>
+	<icon path="assets/icons/application_48.png" width="48" height="48"/>
+
+	<assets path="assets/ui" rename="ui" exclude="*.xml|*.css" if="html5" />
+	<assets path="assets/ui" rename="ui" unless="html5" />
+	<assets path="assets/styles" rename="styles" exclude="*.xml|*.css" if="html5" />
+	<assets path="assets/styles" rename="styles" unless="html5" />
+	
+	<!-- optimize output -->
+	<haxeflag name="-dce std" if="haxe3" />
+
+	<haxeflag name="-lib" value="hscript" />
+	
+</project>

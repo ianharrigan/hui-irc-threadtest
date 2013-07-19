@@ -17,8 +17,8 @@
 package org.greenthreads;
 
 import haxe.io.Error;
-import nme.events.Event;
-import nme.Lib;
+import flash.events.Event;
+import flash.Lib;
 
 class ThreadProcessor {
 	private static var _instance:ThreadProcessor;
@@ -29,8 +29,8 @@ class ThreadProcessor {
 	private var activeThreads:Array<GreenThread>;
 	private var errorTerm:Int = 0;
 	
-	public var timerDelay(getTimerDelay, null):Float;
-	public var share(getShare, setShare):Float;
+	public var timerDelay(get, null):Float;
+	public var share(get, set):Float;
 	
 	public function new(share:Float = 0.99) {
 		if (_instance == null) {
@@ -118,15 +118,15 @@ class ThreadProcessor {
 		errorTerm = ( errorTerm + delta ) >> 1;
 	}
 				
-	public function getTimerDelay():Float {
+	public function get_timerDelay():Float {
 		return 1000 / frameRate;
 	}
                 
-	public function getShare():Float {
+	public function get_share():Float {
 		return _share;
 	}
 
-	public function setShare(percent:Float):Float {
+	public function set_share(percent:Float):Float {
 		_share = percent;
 		return percent;
 	}

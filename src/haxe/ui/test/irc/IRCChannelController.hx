@@ -1,19 +1,19 @@
 package haxe.ui.test.irc;
 
-import haxe.ui.containers.ListView;
-import haxe.ui.controls.Button;
-import haxe.ui.core.ComponentParser;
-import haxe.ui.core.Controller;
-import nme.events.Event;
-import nme.events.KeyboardEvent;
-import nme.events.MouseEvent;
+import haxe.ui.toolkit.containers.ListView;
+import haxe.ui.toolkit.controls.Button;
+import haxe.ui.toolkit.core.Controller;
+import flash.events.Event;
+import flash.events.KeyboardEvent;
+import flash.events.MouseEvent;
+import haxe.ui.toolkit.core.XMLController;
 
-class IRCChannelController extends Controller {
+class IRCChannelController extends XMLController {
 	private var connection:IRCConnection;
 	private var channel:String;
 
 	public function new(connection:IRCConnection, channel:String) {
-		super(ComponentParser.fromXMLResource("ui/ircChannelTab.xml"));
+		super("ui/ircChannelTab.xml");
 		
 		this.connection = connection;
 		this.channel = channel;
@@ -39,14 +39,13 @@ class IRCChannelController extends Controller {
 		connection.writeString("PRIVMSG " + channel + " :" + data + "\r\n");
 		var list:ListView = getComponentAs("ircChannelData", ListView);
 		list.dataSource.add( { text: "Me:", subtext: data } );
-		list.vscrollPosition = list.vscrollMax;
+		list.vscrollPos = list.vscrollMax;
 		getComponent("dataToSend").text = "";
 	}
 	
 	private function onDataReceived(event:IRCEvent):Void {
 		var line:String = cast(event.data, String);
 		if (line.indexOf(channel) != -1) {
-//			trace(line);
 			var list:ListView = getComponentAs("ircChannelData", ListView);
 			
 			var arr:Array<String> = line.split(" ");
@@ -79,7 +78,7 @@ class IRCChannelController extends Controller {
 				list.dataSource.add( { text: "You have joined " + channel, subtext: msg} );
 			}
 			
-			list.vscrollPosition = list.vscrollMax;
+			list.vscrollPos = list.vscrollMax;
 		}
 	}
 }

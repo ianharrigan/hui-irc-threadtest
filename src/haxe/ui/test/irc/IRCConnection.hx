@@ -1,6 +1,6 @@
 package haxe.ui.test.irc;
 
-import haxe.ui.data.DataSource;
+import haxe.ui.toolkit.data.DataSource;
 import haxe.ui.test.irc.IRCEvent;
 import org.greenthreads.GreenThread;
 

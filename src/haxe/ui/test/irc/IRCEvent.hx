@@ -1,5 +1,6 @@
 package haxe.ui.test.irc;
-import nme.events.Event;
+
+import flash.events.Event;
 
 class IRCEvent extends Event {
 	public static var CONNECTED:String = "Connected";

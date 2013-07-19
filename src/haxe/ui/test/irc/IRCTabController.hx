@@ -1,52 +1,44 @@
 package haxe.ui.test.irc;
 
-import haxe.ui.containers.ListView;
-import haxe.ui.core.ComponentParser;
-import haxe.ui.core.Controller;
-import haxe.ui.popup.Popup;
-import nme.events.Event;
-import nme.events.MouseEvent;
+import flash.events.Event;
+import flash.events.MouseEvent;
+import haxe.ui.toolkit.containers.ListView;
+import haxe.ui.toolkit.controls.popups.Popup;
+import haxe.ui.toolkit.core.Component;
+import haxe.ui.toolkit.core.Controller;
+import haxe.ui.toolkit.core.PopupManager;
+import haxe.ui.toolkit.core.XMLController;
 
-class IRCTabController extends Controller {
+class IRCTabController extends XMLController {
 	private var connection:IRCConnection;
 	
 	public function new(connection:IRCConnection, nickname:String) {
-		super(ComponentParser.fromXMLResource("ui/ircTab.xml"));
-		/*
-		getComponent("dataToSend").enabled = false;
-		getComponent("sendButton").enabled = false;
-		getComponent("ircTabData").enabled = false;
-		*/
+		super("ui/ircTab.xml");
 		
 		this.connection = connection;
 		connection.addEventListener(IRCEvent.DATA_RECEIVED, onDataReceived);
-		/*
-		getComponentAs("data", ListView).dataSource.addEventListener(Event.CHANGE, function(e) {
-			getComponentAs("data", ListView).vscrollPosition = getComponentAs("data", ListView).vscrollMax;
+
+		var joiningPopup:Popup = null;
+		attachEvent("joinChannelButton", MouseEvent.CLICK, function (e) {
+			var controller:Controller = new XMLController("ui/joinChannelPopup.xml");
+			var joinChannelPopup:Popup = PopupManager.instance.showCustom(root, controller.view, "Join Channel", PopupButtonType.CONFIRM | PopupButtonType.CANCEL, function(b) {
+				if (b == PopupButtonType.CONFIRM) {
+					var channel:String = controller.getComponent("channel").text;
+					joiningPopup = PopupManager.instance.showBusy(root, "Joining " + channel + "...");
+					connection.join(channel);
+				}
+			});
 		});
-		*/
 		
-		/*
-		connection.addEventListener(IRCEvent.LOGGED_IN, function(e) {
-			getComponent("dataToSend").enabled = true;
-			getComponent("sendButton").enabled = true;
-			getComponent("ircTabData").enabled = true;
-
-			var controller:Controller = new Controller(ComponentParser.fromXMLResource("ui/joinChannelPopup.xml"));
-			var joinChannelPopup:Popup = Popup.showCustom(view.root, controller.view, "Join Channel", true);
-			controller.attachEvent("cancelButton", MouseEvent.CLICK, function (e) {
-				Popup.hidePopup(joinChannelPopup);
-			});
-			
-			controller.attachEvent("joinButton", MouseEvent.CLICK, function (e) {
-				var channel:String = controller.getComponent("channel").text;
-				Popup.hidePopup(joinChannelPopup);
-				
-				connection.join(channel);
-			});
+		connection.addEventListener(IRCEvent.JOINED_CHANNEL, function(e:IRCEvent) {
+			PopupManager.instance.hidePopup(joiningPopup);
+			var tabController:IRCChannelController = new IRCChannelController(connection, e.data);
+			cast(tabController.view, Component).text = e.data;
+			tabController.view.id = "ircChannel";
+			IRCController.mainTabs.addChild(tabController.view);
+			IRCController.mainTabs.selectedIndex = IRCController.mainTabs.pageCount - 1;
 		});
-		*/
-
+		/*
 		var joiningPopup:Popup;
 		attachEvent("joinChannelButton", MouseEvent.CLICK, function (e) {
 			var controller:Controller = new Controller(ComponentParser.fromXMLResource("ui/joinChannelPopup.xml"));
@@ -72,21 +64,21 @@ class IRCTabController extends Controller {
 			IRCController.mainTabs.addChild(tabController.view);
 			IRCController.mainTabs.selectedIndex = IRCController.mainTabs.pageCount - 1;
 		});
-		
-		//connection.login(nickname);
+		*/
 	}
 	
 	private var showRawData:Bool = true;
 	private function onDataReceived(event:IRCEvent):Void {
 		#if android
-			showRawData = false;
+			showRawData = true;
 		#end
 		if (showRawData == false) {
 			return;
 		}
+
 		var list:ListView = getComponentAs("ircTabData", ListView);
 		list.dataSource.add( { text: event.data } );
-		list.vscrollPosition = list.vscrollMax;
+		list.vscrollPos = list.vscrollMax;
 	}
 	
 }
