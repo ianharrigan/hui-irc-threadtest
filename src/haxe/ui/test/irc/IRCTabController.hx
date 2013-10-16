@@ -38,33 +38,6 @@ class IRCTabController extends XMLController {
 			IRCController.mainTabs.addChild(tabController.view);
 			IRCController.mainTabs.selectedIndex = IRCController.mainTabs.pageCount - 1;
 		});
-		/*
-		var joiningPopup:Popup;
-		attachEvent("joinChannelButton", MouseEvent.CLICK, function (e) {
-			var controller:Controller = new Controller(ComponentParser.fromXMLResource("ui/joinChannelPopup.xml"));
-			var joinChannelPopup:Popup = Popup.showCustom(view.root, controller.view, "Join Channel", true);
-			controller.attachEvent("cancelButton", MouseEvent.CLICK, function (e) {
-				Popup.hidePopup(joinChannelPopup);
-			});
-			
-			controller.attachEvent("joinButton", MouseEvent.CLICK, function (e) {
-				var channel:String = controller.getComponent("channel").text;
-				Popup.hidePopup(joinChannelPopup);
-				
-				joiningPopup = Popup.showBusy(view.root, "Joining " + channel + "...");
-				connection.join(channel);
-			});
-		});
-		
-		connection.addEventListener(IRCEvent.JOINED_CHANNEL, function(e:IRCEvent) {
-			Popup.hidePopup(joiningPopup);
-			var tabController:IRCChannelController = new IRCChannelController(connection, e.data);
-			tabController.view.text = e.data;
-			tabController.view.id = "ircChannel";
-			IRCController.mainTabs.addChild(tabController.view);
-			IRCController.mainTabs.selectedIndex = IRCController.mainTabs.pageCount - 1;
-		});
-		*/
 	}
 	
 	private var showRawData:Bool = true;

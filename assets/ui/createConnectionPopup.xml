@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ui:grid columns="2" width="100%">
-	<!--
-	<ui:hbox width="100%">
-		<ui:text autoSize="false" width="45" text="Server:" />
-		<ui:textinput text="irc.freenode.net" id="server" width="100%"/>
-	</ui:hbox>
-	<ui:hbox width="100%">
-		<ui:text autoSize="false" width="45" text="Name:"/>
-		<ui:textinput text="haxeclient" id="nickname" width="100%"/>
-	</ui:hbox>
-	-->
 	<ui:text text="Server:" />
 	<ui:textinput text="irc.freenode.net" id="server" width="100%"/>
 	<ui:text text="Name:"/>
