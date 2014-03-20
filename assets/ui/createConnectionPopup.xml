@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ui:grid columns="2" width="100%">
-	<ui:text text="Server:" />
-	<ui:textinput text="irc.freenode.net" id="server" width="100%"/>
-	<ui:text text="Name:"/>
-	<ui:textinput text="haxeclient" id="nickname" width="100%"/>
-</ui:grid>
+<grid columns="2" width="100%">
+	<text text="Server:" />
+	<textinput text="irc.freenode.net" id="server" width="100%"/>
+	<text text="Name:"/>
+	<textinput text="haxeclient" id="nickname" width="100%"/>
+</grid>

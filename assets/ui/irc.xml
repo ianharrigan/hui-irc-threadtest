@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ui:vbox width="100%" height="100%" id="main">
-	<ui:menubar>
-		<ui:button text="New Connection" id="createConnectionButton" />
-	</ui:menubar>
+<vbox width="100%" height="100%" id="main">
+	<menubar>
+		<button text="New Connection" id="createConnectionButton" />
+	</menubar>
 	
-	<ui:tabview width="100%" height="100%" id="mainTabs">
-		<ui:vbox text="Home">
-			<ui:text text="Click the 'New Connection' button"/>
-		</ui:vbox>
-	</ui:tabview>
-</ui:vbox>
+	<tabview width="100%" height="100%" id="mainTabs">
+		<vbox text="Home">
+			<text text="Click the 'New Connection' button"/>
+		</vbox>
+	</tabview>
+</vbox>

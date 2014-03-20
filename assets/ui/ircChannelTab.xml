@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ui:vbox width="100%" height="100%">
-	<ui:listview id="ircChannelData" width="100%" height="100%" />
+<vbox width="100%" height="100%">
+	<listview id="ircChannelData" width="100%" height="100%" />
 	
-	<ui:hbox width="100%">
-		<ui:textinput text="hello!" id="dataToSend" width="100%" height="100%" />
-		<ui:button text="Send" id="sendButton" />
-	</ui:hbox>
-</ui:vbox>
+	<hbox width="100%">
+		<textinput text="hello!" id="dataToSend" width="100%" height="100%" />
+		<button text="Send" id="sendButton" />
+	</hbox>
+</vbox>

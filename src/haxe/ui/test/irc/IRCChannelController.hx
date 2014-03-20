@@ -38,7 +38,7 @@ class IRCChannelController extends XMLController {
 		var data:String = getComponent("dataToSend").text;
 		connection.writeString("PRIVMSG " + channel + " :" + data + "\r\n");
 		var list:ListView = getComponentAs("ircChannelData", ListView);
-		list.dataSource.add( { text: "Me:", subtext: data } );
+		list.dataSource.add( { text: "Me: " + data } );
 		list.vscrollPos = list.vscrollMax;
 		getComponent("dataToSend").text = "";
 	}
@@ -67,7 +67,7 @@ class IRCChannelController extends XMLController {
 					msg = msg.substr(1, msg.length);
 				}
 				
-				list.dataSource.add( { text: name, subtext: msg } );
+				list.dataSource.add( { text: name + " " + msg, subtext: msg } );
 			} else if (arr[1] == "332") {
 				arr = arr.splice(4, arr.length);
 				var msg:String = arr.join(" ");

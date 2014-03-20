@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ui:vbox width="100%" height="100%" text="Tab">
-	<ui:hbox>
-		<ui:button text="Join Channel" id="joinChannelButton"/>
-	</ui:hbox>
+<vbox width="100%" height="100%" text="Tab">
+	<hbox>
+		<button text="Join Channel" id="joinChannelButton"/>
+	</hbox>
 	
-	<ui:listview id="ircTabData" width="100%" height="100%" />
-</ui:vbox>
+	<listview id="ircTabData" width="100%" height="100%" />
+</vbox>

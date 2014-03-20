@@ -24,8 +24,8 @@ class IRCController extends XMLController {
 
 	private function onCreateConnection(event:MouseEvent):Void {
 		var controller:Controller = new XMLController("ui/createConnectionPopup.xml");
-		var createConnectionPopup:Popup = PopupManager.instance.showCustom(root, controller.view, "New Connection", PopupButtonType.CONFIRM | PopupButtonType.CANCEL, function(b) {
-			if (b == PopupButtonType.CONFIRM) {
+		var createConnectionPopup:Popup = PopupManager.instance.showCustom(controller.view, "New Connection", PopupButton.CONFIRM | PopupButton.CANCEL, function(b) {
+			if (b == PopupButton.CONFIRM) {
 				if (connection != null) {
 					connection.close();
 					connection = null;
@@ -38,7 +38,7 @@ class IRCController extends XMLController {
 					var connectingPopup:Popup = null;
 					connection = new IRCConnection(server);
 					connection.addEventListener(IRCEvent.CONNECTED, function(e) {
-						connectingPopup = PopupManager.instance.showBusy(root, "Logging in as " + nickname + "...");
+						connectingPopup = PopupManager.instance.showBusy("Logging in as " + nickname + "...");
 						connection.login(nickname);
 					});
 					
@@ -56,7 +56,7 @@ class IRCController extends XMLController {
 						trace("ERROR " + e.data);
 						PopupManager.instance.hidePopup(connectingPopup);
 						connectingPopup = null;
-						PopupManager.instance.showSimple(root, "Problem connecting to server:\n\n" + e.data, "Error Connecting");
+						PopupManager.instance.showSimple("Problem connecting to server:\n\n" + e.data, "Error Connecting");
 					});
 					
 					connection.start();

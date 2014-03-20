@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ui:vbox width="100%">
-	<ui:hbox width="100%">
-		<ui:text autoSize="false" width="55" text="Channel:"/>
-		<ui:textinput text="#irchacks" id="channel" width="100%"/>
-	</ui:hbox>
-</ui:vbox>
+<vbox width="100%">
+	<hbox width="100%">
+		<text autoSize="false" width="55" text="Channel:" verticalAlign="center" />
+		<textinput text="#irchacks" id="channel" width="100%"/>
+	</hbox>
+</vbox>

@@ -21,10 +21,10 @@ class IRCTabController extends XMLController {
 		var joiningPopup:Popup = null;
 		attachEvent("joinChannelButton", MouseEvent.CLICK, function (e) {
 			var controller:Controller = new XMLController("ui/joinChannelPopup.xml");
-			var joinChannelPopup:Popup = PopupManager.instance.showCustom(root, controller.view, "Join Channel", PopupButtonType.CONFIRM | PopupButtonType.CANCEL, function(b) {
-				if (b == PopupButtonType.CONFIRM) {
+			var joinChannelPopup:Popup = PopupManager.instance.showCustom(controller.view, "Join Channel", PopupButton.CONFIRM | PopupButton.CANCEL, function(b) {
+				if (b == PopupButton.CONFIRM) {
 					var channel:String = controller.getComponent("channel").text;
-					joiningPopup = PopupManager.instance.showBusy(root, "Joining " + channel + "...");
+					joiningPopup = PopupManager.instance.showBusy("Joining " + channel + "...");
 					connection.join(channel);
 				}
 			});
