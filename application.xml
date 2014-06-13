@@ -26,7 +26,6 @@
 
 	<assets path="assets/ui" rename="ui" exclude="*.xml|*.css" if="html5" />
 	<assets path="assets/ui" rename="ui" unless="html5" />
-	<assets path="assets/fonts" rename="fonts" />
 	
 	<!-- optimize output -->
 	<haxeflag name="-dce std" if="haxe3" />
